@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.embed.swing.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.*?>
+
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.PRSettingsController2">
+   <children>
+      <SplitPane dividerPositions="0.8534136546184738" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="500.0" prefWidth="701.0" style="-fx-border: transparent; -fx-box-border: transparent;">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="434.0" prefWidth="699.0">
+               <children>
+                  <TabPane layoutX="14.0" layoutY="2.0" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="406.0" prefWidth="482.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab fx:id="addIndivTab" onSelectionChanged="#changeToIndivLabel" text="Add Individually">
+                           <content>
+                              <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                 <content>
+                                    <GridPane fx:id="playersGrid" alignment="CENTER" gridLinesVisible="true" prefHeight="42.0" prefWidth="469.0" translateY="20.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="210.0" />
+                                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="210.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="50.61004638671875" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                          <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" />
+                                      </rowConstraints>
+                                       <children>
+                                          <TextField fx:id="playerTag" alignment="CENTER" layoutX="18.0" layoutY="72.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Enter Player Tag">
+                                             <GridPane.margin>
+                                                <Insets />
+                                             </GridPane.margin></TextField>
+                                          <TextField fx:id="playerScore" alignment="CENTER" layoutX="251.0" layoutY="42.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="27.0" prefWidth="200.0" promptText="Enter Player Score" GridPane.columnIndex="1" />
+                                          <Button fx:id="addNewPlayer" alignment="CENTER" mnemonicParsing="false" onAction="#addNewPlayer" prefHeight="32.0" prefWidth="32.0" text="+" textAlignment="CENTER" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font name="System Bold" size="16.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </GridPane>
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </Tab>
+                      <Tab fx:id="addBulkTab" onSelectionChanged="#changeToBulkLabel" text="Add In Bulk">
+                           <content>
+                              <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                 <content>
+                                    <TextArea fx:id="playertagsBulk" prefHeight="386.0" prefWidth="467.0" />
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </Tab>
+                    </tabs>
+                  </TabPane>
+                  <Label fx:id="addPlayersInfo" alignment="TOP_CENTER" layoutX="511.0" layoutY="29.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="375.0" prefWidth="180.0" text="Add Players Individually by providing a tag name and initial ranking.  If no Initial ranking is provided, then player will have the initial ranking that was set on the previous page." wrapText="true">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="217.0" prefWidth="321.0">
+               <children>
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutX="16.0" layoutY="4.0" mnemonicParsing="false" onAction="#backToPRSettings1" prefHeight="53.0" prefWidth="80.0" text="Back" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="saveButton" alignment="CENTER" contentDisplay="CENTER" layoutX="615.0" layoutY="7.0" mnemonicParsing="false" onAction="#savePlayers" prefHeight="53.0" prefWidth="80.0" text="Save &amp; Exit" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Button>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</HBox>

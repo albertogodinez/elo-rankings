@@ -1,20 +1,21 @@
 package elorankings.controller;
 
+
 import elorankings.model.PRSettings;
 import java.io.IOException;
-
 import javafx.application.Application;
-import static javafx.application.ConditionalFeature.FXML;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+
+import javax.script.*;
+
+
 
 public class MainApp extends Application {
 
@@ -177,5 +178,6 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+        
     }
 }

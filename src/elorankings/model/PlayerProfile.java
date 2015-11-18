@@ -4,6 +4,7 @@ package elorankings.model;
 import java.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -19,6 +20,7 @@ import javafx.beans.property.SimpleStringProperty;
 public class PlayerProfile {
     private final StringProperty playersTag;
     private List<StringProperty> possibleNames = new ArrayList<>();
+    private HashMap<String, Integer> playerRecords = new HashMap<String, Integer>();
     private final DoubleProperty score;
     private final IntegerProperty ranking;
     private final IntegerProperty tourneysEntered;

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="700.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="elorankings.controller.PlayerProfileController">
+   <children>
+      <Pane layoutY="8.0" prefHeight="484.0" prefWidth="701.0">
+         <children>
+            <GridPane prefHeight="144.0" prefWidth="699.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label contentDisplay="CENTER" text="Players Tag: " textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="playersTag" alignment="CENTER" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" GridPane.columnIndex="1" />
+                  <Label contentDisplay="CENTER" layoutX="262.0" layoutY="15.0" text="Score: " textAlignment="CENTER" wrapText="true" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="playersScore" alignment="CENTER" layoutX="360.0" layoutY="12.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label contentDisplay="CENTER" layoutX="306.0" layoutY="45.0" text="Total tournaments entered: " textAlignment="CENTER" wrapText="true" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="totalTournaments" contentDisplay="CENTER" layoutX="144.0" layoutY="75.0" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lastDateEntered" contentDisplay="CENTER" layoutX="144.0" layoutY="75.0" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" layoutX="144.0" layoutY="75.0" text="Last date entered: " textAlignment="CENTER" wrapText="true" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" layoutX="217.0" layoutY="105.0" text="Player status: " textAlignment="CENTER" wrapText="true" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="playersStatus" alignment="CENTER" layoutX="360.0" layoutY="42.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+               </children>
+            </GridPane>
+            <Button layoutX="6.0" layoutY="443.0" mnemonicParsing="false" onAction="#backToPlayerList" text="Back" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+            <Button layoutX="634.0" layoutY="443.0" mnemonicParsing="false" onAction="#savePlayerInfo" text="Save" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

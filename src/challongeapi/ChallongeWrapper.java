@@ -1,9 +1,9 @@
 package challongeapi;
 
 
-import pojoclasses.Match;
-import pojoclasses.Participant;
-import pojoclasses.Tournament;
+import challongeapi.pojoclasses.Match;
+import challongeapi.pojoclasses.Participant;
+import challongeapi.pojoclasses.Tournament;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,16 +32,19 @@ public class ChallongeWrapper {
     private static String matchesRequest;
     
     
-    public void setUserName(String username){
+    private void setUserName(String username){
         USER_NAME = username;
     }
     
-    public void setApiKey(String apiKey){
+    private void setApiKey(String apiKey){
         API_KEY = apiKey;
     }
     
     //Must set API_KEY and USER_NAME beforehand
-    public boolean obtainProperUrl(String challongeLink){
+    public boolean runUrl(String username, String apiKey, String challongeLink){
+        setUserName(username);
+        setApiKey(apiKey);
+        
         if(API_KEY == null || USER_NAME == null)
             return false;
         BASE_URL = "https://" + USER_NAME + ":" + API_KEY + "@api.challonge.com/v1";
@@ -115,8 +118,8 @@ public class ChallongeWrapper {
     }
     
     
-    public Tournament getTournament(){
-        if(getTournamentInfo(tournamentRequest))
+    public Tournament getTournamentInfo(){
+        if(ChallongeWrapper.this.getTournamentInfo(tournamentRequest))
             return tournament;
         else
             return null;
@@ -148,9 +151,9 @@ public class ChallongeWrapper {
         ChallongeWrapper challongeWrapper = new ChallongeWrapper();
         challongeWrapper.setUserName("alberto_g90");
         challongeWrapper.setApiKey("VnU1jHWxzJZ6Rsh2hEkkfm30TVZ2OvxICQGKUYWJ");
-        challongeWrapper.obtainProperUrl("http://challonge.com/zwobz1x");
+        challongeWrapper.runUrl("http://challonge.com/zwobz1x");
         
-        Tournament tournamentInfo = challongeWrapper.getTournament();
+        Tournament tournamentInfo = challongeWrapper.getTournamentInfo();
         HashMap<String,String> playerInfo = challongeWrapper.getParticipants();
         List<Match> matches1 = challongeWrapper.getMatches();
         

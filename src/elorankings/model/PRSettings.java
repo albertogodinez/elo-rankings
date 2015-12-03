@@ -12,19 +12,27 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 /*
    Model class for each of the Power Rankings
 */
 public class PRSettings {
     //Holds all of the players that are in this PR
-    private List<PlayerProfile> playersList = new ArrayList<PlayerProfile>();
+    //Considering changing to maps instead, but will change later
+    private ArrayList<PlayerProfile> playersList = new ArrayList<PlayerProfile>();
     private final StringProperty prName;
     private final DoubleProperty initScore;
+    private final StringProperty challongeUsername;
+    private final StringProperty challongeApiKey;
     private final BooleanProperty showPlacingDiff;
     private final BooleanProperty showPointDiff;
     private final BooleanProperty removeInnactive;
+    /*
+    **Number of tournaments an Unrated player must attend before being considered
+    **Active
+    */
+    private final IntegerProperty numTourneysNeeded;
+    //Number of sets player needs to play in order to be considered Active
+    private final IntegerProperty numSetsNeeded;
     //Number of tournaments missed before Active player is considered Innactive
     private final IntegerProperty numTourneysForInnactive;
     //Number of tournaments entered before Active player is considered Innactive
@@ -36,13 +44,19 @@ public class PRSettings {
     //who are going through decay.
     private final IntegerProperty pointsRemoved;
     private boolean samePointsRemoved = true;
+    //This keeps track of the players current id
+    private int currentId=0;
     
     public PRSettings(){
         prName = new SimpleStringProperty("");
         initScore = new SimpleDoubleProperty();
+        challongeUsername = new SimpleStringProperty("");
+        challongeApiKey = new SimpleStringProperty("");
         showPlacingDiff = new SimpleBooleanProperty();
         showPointDiff = new SimpleBooleanProperty();
         removeInnactive = new SimpleBooleanProperty();
+        numTourneysNeeded = new SimpleIntegerProperty(3);
+        numSetsNeeded = new SimpleIntegerProperty(8);
         numTourneysForInnactive = new SimpleIntegerProperty(5);
         numTourneysForActive = new SimpleIntegerProperty(2);
         implementPointDecay = new SimpleBooleanProperty(false);
@@ -74,6 +88,22 @@ public class PRSettings {
         this.initScore.set(initScore);
     }
     
+    public void setChallongeUsername(String username){
+        challongeUsername.set(username);
+    }
+    
+    public String getChallongeUsername(){
+        return challongeUsername.get();
+    }
+    
+    public void setChallongeApiKey(String apiKey){
+        challongeApiKey.set(apiKey);
+    }
+    
+    public String getChallongeApiKey(){
+        return challongeApiKey.get();
+    }
+    
     public BooleanProperty showPlacingDiff(){
         return showPlacingDiff;
     }
@@ -96,6 +126,31 @@ public class PRSettings {
     
     public void setShowPointDiff(boolean showPointDiff){
         this.showPointDiff.set(showPointDiff);
+    }
+    
+    public void setNumTourneysNeeded(int numTourneys){
+        numTourneysNeeded.set(numTourneys);
+        
+        for(PlayerProfile playerPro : playersList){
+            if(playerPro.getTourneysEntered() < numTourneysNeeded.get() && 
+               playerPro.getPlayersStatus().equals("active"))
+                playerPro.setPlayersStatus("unrated");
+            else if(playerPro.getTourneysEntered() >= numTourneysNeeded.get() &&
+                    playerPro.getPlayersStatus().equals("unrated"))
+                playerPro.setPlayersStatus("active");
+        }
+    }
+    
+    public int getNumTourneysNeeded(){
+        return numTourneysNeeded.get();
+    }
+    
+    public int getNumSetsNeeded(){
+        return numSetsNeeded.get();
+    }
+    
+    public void setNumSetsNeeded(int numSetsNeeded){
+        this.numSetsNeeded.set(numSetsNeeded);
     }
     
     public BooleanProperty removeInnactive(){
@@ -170,8 +225,10 @@ public class PRSettings {
         //if pointsRemoved is < 0, this will mean that 
         //we will use a formula to get the average points
         //removed per tournament missed for decay
-        if(pointsRemoved > 0)
+        if(pointsRemoved > 0){
             this.pointsRemoved.set(pointsRemoved);
+            samePointsRemoved=true;
+        }
         else{
             samePointsRemoved=false;
         }
@@ -185,25 +242,110 @@ public class PRSettings {
     
     public void sortByScore(){
         Collections.sort(playersList, new PlayerScoreComparator());
+        int i = 1;
+        double prevScore = -1;
+        for(PlayerProfile player : playersList){
+            if(player.getPlayersStatus().equals("active")){
+                if(prevScore < 0){
+                    player.setRanking(i);
+                    prevScore = player.getScore();
+                }
+                else if(prevScore == player.getScore())
+                    player.setRanking(i);
+                else{
+                    i++;
+                    player.setRanking(i);
+                    prevScore = player.getScore();
+                }
+            }
+        }
     }
     
-    public boolean addPlayer(String playerTag){
+     public boolean deletePlayerByTag(String tag){
+        for(int i=0; i<playersList.size(); i++){
+            if(playersList.get(i).getPlayersTag().equals(tag)){
+                playersList.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean addPlayerByTag(String playerTag){
         if(playersList.size() > 0){
-        //System.out.print("\nTagTaken id:" + tagTaken(playerTag));
-            if(tagTaken(playerTag) < 0)
-                playersList.add(new PlayerProfile(playerTag, initScore.get()));
+        //System.out.print("\nTagTaken id:" + tagUsed(playerTag));
+            if(tagUsed(playerTag) < 0){
+                playersList.add(new PlayerProfile(playerTag, initScore.get(), currentId));
+                currentId++;
+            }
             else
                 return false;
         }
-        else 
-            playersList.add(new PlayerProfile(playerTag,initScore.get()));
+        else {
+            playersList.add(new PlayerProfile(playerTag,initScore.get(), currentId));
+            currentId++;
+        }
         
         return true;
         
     }
     
-    public int tagTaken(String playerTag){
-        return Collections.binarySearch(playersList, new PlayerProfile(playerTag, initScore.get()), new PlayerTagComparator());
+    public boolean addPlayerByObject(PlayerProfile newPlayer){
+        if(playersList.size() > 0){
+            if(tagUsed(newPlayer.getPlayersTag()) < 0){
+                newPlayer.setPlayerId(currentId);
+                playersList.add(newPlayer);
+                currentId++;
+            }
+            else
+                return false;
+        }
+        else{
+            newPlayer.setPlayerId(currentId);
+            playersList.add(newPlayer);
+            currentId++;
+        }
+        
+        return true;
+    }
+    
+    //Following functions update players stats
+    public Boolean tagTaken(String playerTag){
+        if(tagUsed(playerTag) < 0)
+            return false;
+        else
+            return true;
+    }
+    
+    public Boolean updateTournamentsEntered(String playerTag, String dateOfTournament){
+        int playerIndex = findPlayerIndexUsingTag(playerTag);
+        if(playerIndex == -1)
+            return false;
+        playersList.get(playerIndex).setLastDateEntered(dateOfTournament);
+        playersList.get(playerIndex).incrementTournamentsEntered();
+        if(playersList.get(playerIndex).getTourneysEntered() >= numTourneysNeeded.get()){
+            String status = playersList.get(playerIndex).getPlayersStatus();
+            if(status.equals("unrated"))
+                playersList.get(playerIndex).setPlayersStatus("active");
+        }
+        return true;
+    }
+    
+    public int findPlayerIndexUsingTag(String playerTag){
+        for(int i =0; i < playersList.size(); i++){
+            if(playersList.get(i).getPlayersTag().equalsIgnoreCase(playerTag))
+                return i; 
+        }
+        return -1;
+    }
+    //End of functions that update players stats
+    /*
+    **Searches through player list using custom comparator to see if tag is 
+    **already taken 
+    */
+    private int tagUsed(String playerTag){
+        //The -1 represents the player ID
+        return Collections.binarySearch(playersList, new PlayerProfile(playerTag, initScore.get(), -1), new PlayerTagComparator());
     }
     
     public boolean getSamePointsRemoved(){
@@ -216,6 +358,24 @@ public class PRSettings {
         }
     }
     
+    public  List<PlayerProfile> getAllPlayers(){
+        return playersList;
+    }
+    
+    public PlayerProfile getLastPlayerAdded(){
+        return playersList.get(playersList.size()-1);
+    }
+    
+    //This functions can more than likely be made faster
+    public PlayerProfile getPlayerByTag(String playerTag){
+        for(PlayerProfile playerProfile : playersList){
+            if(playerProfile.getPlayersTag().equalsIgnoreCase(playerTag))
+                return playerProfile;
+        }
+        
+        return null;
+    }
+    
     class PlayerTagComparator implements Comparator<PlayerProfile>{
         @Override
         public int compare(PlayerProfile p1, PlayerProfile p2){
@@ -226,8 +386,10 @@ public class PRSettings {
     class PlayerScoreComparator implements Comparator<PlayerProfile>{
         @Override
         public int compare(PlayerProfile p1, PlayerProfile p2){
-            return p1.getScore() < p2.getScore() ? -1 : p1.getScore() == p2.getScore() ? 0 : 1;
+            return p1.getScore() > p2.getScore() ? -1 : p1.getScore() == p2.getScore() ? 0 : 1;
         }
     }
+    
+ 
     
 }

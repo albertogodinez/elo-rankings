@@ -9,7 +9,6 @@ public class MainMenuController {
     private MainApp mainApp;
     
     
-//Constructor
     public MainMenuController(){
     }
     
@@ -30,6 +29,11 @@ public class MainMenuController {
     @FXML
     private void handleNewPR() {
         mainApp.openNewPRSettings1();
+    }
+    
+    @FXML
+    private void openPRList(){
+        mainApp.openPRList();
     }
   
 

@@ -10,11 +10,11 @@
 <?import javafx.collections.*?>
 <?import validatetextfieldsfxml.custom.*?>
 
-<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.PRSettingsController">
+<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.PRSettingsController">
    <children>
-      <ScrollPane fitToWidth="true" prefHeight="500.0" prefWidth="750.0">
+      <ScrollPane fitToWidth="true" prefHeight="450.0" prefWidth="700.0">
          <content>
-            <GridPane alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="567.0" prefWidth="699.0">
+            <GridPane alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="609.0" prefWidth="698.0">
               <columnConstraints>
                 <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -22,14 +22,16 @@
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="50.0" minHeight="0.0" prefHeight="47.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="43.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="43.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="50.0" minHeight="0.0" prefHeight="35.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -53,7 +55,7 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <Label contentDisplay="CENTER" layoutX="35.0" layoutY="45.0" text="Show placing difference when updated?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="2">
+                  <Label contentDisplay="CENTER" layoutX="35.0" layoutY="45.0" text="Show placing difference when updated?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="4">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -63,7 +65,7 @@
                   </Label>
                   <TextField fx:id="prName" alignment="CENTER" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="Enter Name Here" GridPane.columnIndex="1" />
                   <TextField fx:id="initScore" alignment="CENTER" layoutX="359.0" layoutY="22.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="1500" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label contentDisplay="CENTER" layoutX="233.0" layoutY="85.0" text="Show point difference when updated?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="3">
+                  <Label contentDisplay="CENTER" layoutX="233.0" layoutY="85.0" text="Show point difference when updated?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="5">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -71,7 +73,7 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <ComboBox fx:id="showPlacingDiff" prefWidth="150.0" promptText="SELECT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <ComboBox fx:id="showPlacingDiff" prefWidth="150.0" promptText="SELECT" GridPane.columnIndex="1" GridPane.rowIndex="4">
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="Yes" />
@@ -79,7 +81,7 @@
                         </FXCollections>
                     </items>
                   </ComboBox>
-                  <ComboBox fx:id="showPointDiff" layoutX="359.0" layoutY="82.0" prefWidth="150.0" promptText="SELECT" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <ComboBox fx:id="showPointDiff" layoutX="359.0" layoutY="82.0" prefWidth="150.0" promptText="SELECT" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <items>
                         <FXCollections fx:factory="observableArrayList">
                            <String fx:value="Yes" />
@@ -87,7 +89,7 @@
                         </FXCollections>
                      </items>
                   </ComboBox>
-                  <Label contentDisplay="CENTER" layoutX="62.0" layoutY="115.0" text="Remove players if innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="4">
+                  <Label contentDisplay="CENTER" layoutX="62.0" layoutY="115.0" text="Remove players if innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="8">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -95,7 +97,7 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <ComboBox fx:id="removeInnactive" layoutX="359.0" layoutY="112.0" prefWidth="150.0" promptText="SELECT" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <ComboBox fx:id="removeInnactive" layoutX="359.0" layoutY="112.0" prefWidth="150.0" promptText="SELECT" GridPane.columnIndex="1" GridPane.rowIndex="8">
                      <items>
                         <FXCollections fx:factory="observableArrayList">
                            <String fx:value="Yes" />
@@ -103,7 +105,7 @@
                         </FXCollections>
                      </items>
                   </ComboBox>
-                  <Label contentDisplay="CENTER" layoutX="133.0" layoutY="145.0" text="Number of tournaments missed before Active player is considered Innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS">
+                  <Label contentDisplay="CENTER" layoutX="133.0" layoutY="145.0" text="Number of tournaments missed before Active player is considered Innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="9" GridPane.vgrow="ALWAYS">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -111,7 +113,7 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <Label contentDisplay="CENTER" layoutX="10.0" layoutY="172.0" text="Number of tournaments entered before Active player is considered Innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="6" GridPane.vgrow="SOMETIMES">
+                  <Label contentDisplay="CENTER" layoutX="10.0" layoutY="172.0" text="Number of tournaments entered before Active player is considered Innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="10" GridPane.vgrow="SOMETIMES">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -119,9 +121,9 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <TextField fx:id="numTourneysForInnactive" alignment="CENTER" disable="true" layoutX="359.0" layoutY="22.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="5" text="5" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="numTourneysForActive" alignment="CENTER" disable="true" layoutX="359.0" layoutY="182.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="2" text="2" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <Label contentDisplay="CENTER" layoutX="133.0" layoutY="145.0" text="Implement point decay before player is considered innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="7" GridPane.vgrow="SOMETIMES">
+                  <TextField fx:id="numTourneysForInnactive" alignment="CENTER" disable="true" layoutX="359.0" layoutY="22.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="5" text="5" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <TextField fx:id="numTourneysForActive" alignment="CENTER" disable="true" layoutX="359.0" layoutY="182.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="2" text="2" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                  <Label contentDisplay="CENTER" layoutX="133.0" layoutY="145.0" text="Implement point decay before player is considered innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="11" GridPane.vgrow="SOMETIMES">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -129,7 +131,7 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <ComboBox fx:id="implementPointDecay" disable="true" layoutX="359.0" layoutY="142.0" prefWidth="150.0" promptText="SELECT" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                  <ComboBox fx:id="implementPointDecay" disable="true" layoutX="359.0" layoutY="142.0" prefWidth="150.0" promptText="SELECT" GridPane.columnIndex="1" GridPane.rowIndex="11">
                      <items>
                         <FXCollections fx:factory="observableArrayList">
                            <String fx:value="Yes" />
@@ -137,7 +139,7 @@
                         </FXCollections>
                      </items>
                   </ComboBox>
-                  <Label contentDisplay="CENTER" layoutX="10.0" layoutY="287.0" text="Start decay on which missed tournament?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="8">
+                  <Label contentDisplay="CENTER" layoutX="10.0" layoutY="287.0" text="Start decay on which missed tournament?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="12">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -145,8 +147,8 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <TextField fx:id="startOfDecay" alignment="CENTER" disable="true" layoutX="359.0" layoutY="272.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="3" text="3" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                  <Label contentDisplay="CENTER" layoutX="71.0" layoutY="367.0" text="Amount of points taken off per tournaments missed, once decay starts?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="9">
+                  <TextField fx:id="startOfDecay" alignment="CENTER" disable="true" layoutX="359.0" layoutY="272.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="3" text="3" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                  <Label contentDisplay="CENTER" layoutX="71.0" layoutY="367.0" text="Amount of points taken off per tournaments missed, once decay starts?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="13">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -154,14 +156,14 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <CheckBox fx:id="removeSameCheckBox" disable="true" mnemonicParsing="false" text="Remove same amount of points from all players" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                  <TextField fx:id="pointsRemoved" alignment="CENTER" disable="true" layoutX="359.0" layoutY="363.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="5" text="5" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                  <CheckBox fx:id="removeSameCheckBox" disable="true" mnemonicParsing="false" text="Remove same amount of points from all players" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                  <TextField fx:id="pointsRemoved" alignment="CENTER" disable="true" layoutX="359.0" layoutY="363.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="5" text="5" GridPane.columnIndex="1" GridPane.rowIndex="14">
                      <GridPane.margin>
                         <Insets left="20.0" />
                      </GridPane.margin>
                   </TextField>
-                  <CheckBox fx:id="removeAvgCheckBox" disable="true" layoutX="351.0" layoutY="411.0" mnemonicParsing="false" text="Remove average distance amount of points from all players" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#backToMainMenu" text="Back" textAlignment="CENTER" wrapText="true" GridPane.halignment="LEFT" GridPane.rowIndex="14">
+                  <CheckBox fx:id="removeAvgCheckBox" disable="true" layoutX="351.0" layoutY="411.0" mnemonicParsing="false" text="Remove average distance amount of points from all players" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                  <Button fx:id="backButton" alignment="CENTER" mnemonicParsing="false" onAction="#backToMainMenu" text="Back" textAlignment="CENTER" wrapText="true" GridPane.halignment="LEFT" GridPane.rowIndex="16">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -169,7 +171,7 @@
                         <Insets bottom="10.0" left="10.0" top="30.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button alignment="CENTER" layoutX="10.0" layoutY="518.0" mnemonicParsing="false" onAction="#savePRSettings" text="Save &amp; Next" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="14">
+                  <Button fx:id="saveButton" alignment="CENTER" layoutX="10.0" layoutY="518.0" mnemonicParsing="false" onAction="#savePRSettings" text="Save &amp; Next" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="16">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -177,7 +179,42 @@
                         <Insets bottom="10.0" right="10.0" top="30.0" />
                      </GridPane.margin>
                   </Button>
-                  <Label fx:id="errorLabel" textFill="RED" GridPane.rowIndex="13" />
+                  <Label contentDisplay="CENTER" layoutX="195.0" layoutY="67.0" text="Challonge Username:" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label contentDisplay="CENTER" layoutX="187.0" layoutY="105.0" text="Challonge API Key:" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="challongeUsername" alignment="CENTER" layoutX="359.0" layoutY="64.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="Enter Challonge Username" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="challongeApiKey" alignment="CENTER" layoutX="359.0" layoutY="102.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="Enter Challonge API Key" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label contentDisplay="CENTER" layoutX="179.0" layoutY="100.0" text="Number of tournaments player needs to attend to for Unrated player to be considered Active player:" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="6">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="numTourneysNeeded" alignment="CENTER" layoutX="351.0" layoutY="24.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="3" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <Label contentDisplay="CENTER" layoutX="10.0" layoutY="220.0" text="Number of sets player needs to play to be changed from Unrated to Active:" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="7">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="numSetsNeeded" alignment="CENTER" layoutX="351.0" layoutY="214.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="8" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                </children>
                <opaqueInsets>
                   <Insets />
@@ -192,4 +229,4 @@
          </opaqueInsets>
       </ScrollPane>
    </children>
-</HBox>
+</AnchorPane>

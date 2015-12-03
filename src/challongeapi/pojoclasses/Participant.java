@@ -1,4 +1,4 @@
-package pojoclasses;
+package challongeapi.pojoclasses;
 
 
 public class Participant {

@@ -1,7 +1,7 @@
-package jsonwrappers;
+package challongeapi.jsonwrappers;
 
 
-import pojoclasses.Match;
+import challongeapi.pojoclasses.Match;
 
 
 public class MatchesWrapper {

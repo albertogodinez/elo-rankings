@@ -1,4 +1,4 @@
-package pojoclasses;
+package challongeapi.pojoclasses;
 
 
 import com.google.gson.annotations.SerializedName;

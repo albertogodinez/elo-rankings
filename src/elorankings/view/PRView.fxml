@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.PRViewController">
+   <children>
+      <BorderPane layoutX="4.0" layoutY="6.0" prefHeight="493.0" prefWidth="691.0">
+         <top>
+            <Label fx:id="prName" textAlignment="CENTER" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+               <BorderPane.margin>
+                  <Insets top="10.0" />
+               </BorderPane.margin>
+            </Label>
+         </top>
+         <bottom>
+            <Pane prefHeight="45.0" prefWidth="691.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button layoutY="7.0" mnemonicParsing="false" onAction="#backToPROptions" text="Back" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+                  <Button layoutX="493.0" layoutY="7.0" mnemonicParsing="false" onAction="#editPlayer" text="Edit Selected Player" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+                  <Button layoutX="121.0" layoutY="7.0" mnemonicParsing="false" onAction="#addNewPlayer" text="Add New Player" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+                  <Button layoutX="320.0" layoutY="7.0" mnemonicParsing="false" onAction="#deletePlayer" text="Delete Player" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Button>
+               </children>
+            </Pane>
+         </bottom>
+         <center>
+            <TabPane fx:id="playersTab" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+              <tabs>
+                <Tab fx:id="activePlayers" text="Active Players">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView fx:id="activePlayersList" prefHeight="380.0" prefWidth="691.0" />
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                <Tab fx:id="inactivePlayers" text="Inactive Players">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView fx:id="inactivePlayersList" prefHeight="380.0" prefWidth="691.0" />
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                  <Tab fx:id="unratedPlayers" text="Unrated Players">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView fx:id="unratedPlayersList" prefHeight="380.0" prefWidth="691.0" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+                  <Tab fx:id="allPlayers" text="All Players">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ListView fx:id="allPlayersList" prefHeight="380.0" prefWidth="691.0" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

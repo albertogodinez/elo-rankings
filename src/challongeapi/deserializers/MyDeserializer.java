@@ -1,4 +1,4 @@
-package deserializers;
+package challongeapi.deserializers;
 
 
 import com.google.gson.Gson;

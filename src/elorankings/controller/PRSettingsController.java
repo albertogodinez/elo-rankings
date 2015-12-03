@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -18,11 +19,19 @@ public class PRSettingsController {
     @FXML
     private TextField initScore;
     @FXML
+    private TextField challongeUsername;
+    @FXML
+    private TextField challongeApiKey;
+    @FXML
     private ComboBox showPlacingDiff;
+    @FXML
+    private TextField numTourneysNeeded;
     @FXML
     private ComboBox showPointDiff;
     @FXML
     private ComboBox removeInnactive;
+    @FXML
+    private TextField numSetsNeeded;
     @FXML
     private TextField numTourneysForInnactive;
     @FXML
@@ -38,9 +47,12 @@ public class PRSettingsController {
     @FXML
     private TextField pointsRemoved;
     @FXML
-    private Label errorLabel;
+    private Button saveButton;
+    @FXML
+    private Button backButton;
     
     private MainApp mainApp;
+    private String prevMenu = "";
     
     PRSettings newPRSettings;
     
@@ -108,10 +120,28 @@ public class PRSettingsController {
         });
     }
    
+/**
+  * Is called by the main application to give a reference back to itself.
+  * @param mainApp
+  * @param prSettings
+**/
+    public void setMainApp(MainApp mainApp, PRSettings prSettings) {
+        this.mainApp = mainApp;
+        newPRSettings = prSettings;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/PRSettings.fxml"));
+        loader.setController(this);
+        
+    }
+    
+  
     private boolean checkIfEmpty(){
        
         if(prName.getText().trim().length() == 0 || 
            initScore.getText().trim().length() == 0 ||
+           challongeUsername.getText().trim().length() == 0 ||
+           challongeApiKey.getText().trim().length() == 0 ||
+           numTourneysNeeded.getText().trim().length() == 0 ||
+           numSetsNeeded.getText().trim().length() == 0 ||
            showPlacingDiff.getSelectionModel().isEmpty() ||
            showPointDiff.getSelectionModel().isEmpty() ||
            removeInnactive.getSelectionModel().isEmpty() || 
@@ -136,17 +166,9 @@ public class PRSettingsController {
         mainApp.updatePR(newPRSettings);
         mainApp.openNewPRSettings2(newPRSettings);
     }
-/**
-  * Is called by the main application to give a reference back to itself.
-  * @param mainApp
-**/
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/PRSettings.fxml"));
-        loader.setController(this);
-    }
-    
-    public void setOldMainApp(MainApp mainApp, PRSettings prSettings){
+
+    public void setOldMainApp(MainApp mainApp, PRSettings prSettings, String prevMenu){
+        this.prevMenu = prevMenu;
         this.mainApp = mainApp;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/PRSettings.fxml"));
         loader.setController(this);
@@ -154,6 +176,11 @@ public class PRSettingsController {
         newPRSettings = prSettings;
         prName.setText(newPRSettings.getPrName());
         initScore.setText(Integer.toString((int) newPRSettings.getInitScore()));
+        challongeUsername.setText(newPRSettings.getChallongeUsername());
+        challongeApiKey.setText(newPRSettings.getChallongeApiKey());
+        numTourneysNeeded.setText(Integer.toString((int)newPRSettings.getNumTourneysNeeded()));
+        numSetsNeeded.setText(Integer.toString((int)newPRSettings.getNumSetsNeeded()));
+        
         if(newPRSettings.getShowPlacingDiff())
             showPlacingDiff.getSelectionModel().selectFirst();
         else
@@ -185,9 +212,21 @@ public class PRSettingsController {
         }
         else
             removeInnactive.getSelectionModel().selectLast();
+        
+        //If the previous menu was the options screen, disable and change buttons
+        if(prevMenu.equals("optionsScreen")){
+            saveButton.setText("Save");
+            saveButton.setOnAction((event)->{
+                savePRSettings();
+                mainApp.openPROptionsScreen(prSettings.getPrName());
+            });
+            backButton.setOnAction((event)->{
+                mainApp.openPROptionsScreen(newPRSettings.getPrName());
+            });
+        }
 
     }
-    
+
 /**
  * Called whenever user clicks BACK
  * Loads the main menu
@@ -201,14 +240,15 @@ public class PRSettingsController {
     @FXML
     private void savePRSettings(){
         if(checkIfEmpty()){
-            newPRSettings = new PRSettings();
             boolean tempBool;
         
             newPRSettings.setPrName(prName.getText());
-            
-        
             newPRSettings.setInitScore(Integer.parseInt(initScore.getText()));
-
+            newPRSettings.setChallongeUsername(challongeUsername.getText());
+            newPRSettings.setChallongeApiKey(challongeApiKey.getText());
+            newPRSettings.setNumTourneysNeeded(Integer.parseInt(numTourneysNeeded.getText()));
+            newPRSettings.setNumSetsNeeded(Integer.parseInt(numSetsNeeded.getText()));
+            
             tempBool = "Yes".equals(showPlacingDiff.getValue().toString());
             newPRSettings.setShowPlacingDiff(tempBool);
 
@@ -218,28 +258,36 @@ public class PRSettingsController {
             tempBool = "Yes".equals(removeInnactive.getValue().toString());
             newPRSettings.setRemoveInnactive(tempBool);
             
-            //I'm pretty sure I'm checking for this twice, so check later to make sure i'm not
-            if(!numTourneysForInnactive.disabledProperty().getValue() && !numTourneysForActive.disabledProperty().getValue()){
-                newPRSettings.setNumTourneysForActive(Integer.parseInt(numTourneysForInnactive.getText()));
+            if(newPRSettings.getRemoveInnactive()){
+                newPRSettings.setNumTourneysForInnactive(Integer.parseInt(numTourneysForInnactive.getText()));
                 newPRSettings.setNumTourneysForActive(Integer.parseInt(numTourneysForActive.getText()));
             }
+            //I'm pretty sure I'm checking for this twice, so check later to make sure i'm not
+            /*if(!numTourneysForInnactive.disabledProperty().getValue() && !numTourneysForActive.disabledProperty().getValue()){
+                newPRSettings.setNumTourneysForActive(Integer.parseInt(numTourneysForInnactive.getText()));
+                newPRSettings.setNumTourneysForActive(Integer.parseInt(numTourneysForActive.getText()));
+            }*/
             
             if(!implementPointDecay.disabledProperty().getValue()){
                 tempBool = "Yes".equals(implementPointDecay.getValue().toString());
                 newPRSettings.setImplementPointDecay(tempBool);
-
-                newPRSettings.setStartOfDecay(Integer.parseInt(startOfDecay.getText()));
+                
+                if(newPRSettings.getImplementPointDecay())
+                    newPRSettings.setStartOfDecay(Integer.parseInt(startOfDecay.getText()));
                 if(removeSameCheckBox.isSelected())
                     newPRSettings.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));
                 else
                     newPRSettings.setPointsRemoved(-1);
             }
             //After it is saved, then the second page is loaded*/
-            loadPRSettings2();
+            //if it is not loaded from the options screen
+            if(!prevMenu.equals("optionsScreen")){
+                loadPRSettings2();
+            }
         }
         else{
             //Display error message to user
-            errorLabel.setText("Please fill out all of the form");
+            System.out.println("Please fill out all of the form");
             //System.out.print("There are empty textfields");
         }
     }

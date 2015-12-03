@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package elorankings.controller;
 
 import elorankings.model.PRSettings;
@@ -18,10 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
-/**
- *
- * @author Alberto
- */
+
 public class PRSettingsController2 {
     @FXML
     private TextField playerTag;
@@ -49,7 +41,11 @@ public class PRSettingsController2 {
     }
     
 
-    
+/**
+  * Is called by the main application to give a reference back to itself.
+  * @param mainApp
+  * @param prSettings
+**/
     public void setMainApp(MainApp mainApp, PRSettings prSettings){
         this.mainApp = mainApp;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/MainMenu.fxml"));
@@ -118,11 +114,10 @@ public class PRSettingsController2 {
     
     @FXML
     private void savePlayers(){
-        //String temp = playertagsBulk.getText();
         for(String line : playertagsBulk.getText().split("\n")){
             //if(!prSettings.tagTaken(line)){
             //    System.out.print("player added!");
-                if(!prSettings.addPlayer(line)){
+                if(!prSettings.addPlayerByTag(line)){
                     Alert alert = new Alert(AlertType.WARNING);
                     alert.initOwner(mainApp.getPrimaryStage());
                     alert.setTitle("PlayerTag Taken");
@@ -138,11 +133,12 @@ public class PRSettingsController2 {
         }
         
         prSettings.printAllPlayers();
+        mainApp.showMainMenu();
     }
     
     @FXML
     private void backToPRSettings1(){
-        mainApp.backToPRSettings1(prSettings);
+        mainApp.backToPRSettings1(prSettings, "prSettings2");
         //mainApp.openNewPRSettings1();
     }
     

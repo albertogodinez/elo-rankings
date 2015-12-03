@@ -2,6 +2,7 @@ package elorankings.controller;
 
 
 import elorankings.model.PRSettings;
+import elorankings.model.PlayerProfile;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -13,7 +14,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import javax.script.*;
 
 
 
@@ -51,6 +51,7 @@ public class MainApp extends Application {
             e.printStackTrace();
         }
     }
+    
 
     /**
      * Shows the person overview inside the root layout.
@@ -75,20 +76,121 @@ public class MainApp extends Application {
         }
     }
     
+    public void openPRList(){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            
+            loader.setLocation(MainApp.class.getResource("/elorankings/view/PRList.fxml"));
+            AnchorPane overview = (AnchorPane) loader.load();
+
+            // Set main menu into the center of root layout.
+            rootLayout.setCenter(overview);
+            
+
+            // Give the controller access to the main app.
+            PRListController controller = loader.getController();
+            controller.setMainApp(this);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void openPROptionsScreen(String prName){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            
+            loader.setLocation(MainApp.class.getResource("/elorankings/view/PROptionsScreen.fxml"));
+            AnchorPane overview = (AnchorPane) loader.load();
+
+            // Set main menu into the center of root layout.
+            rootLayout.setCenter(overview);
+            
+
+            // Give the controller access to the main app.
+            PROptionsScreenController controller = loader.getController();
+            controller.setMainApp(this, prName);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void openAddTournamentScreen(PRSettings pr){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            
+            loader.setLocation(MainApp.class.getResource("/elorankings/view/AddTournamentScreen.fxml"));
+            AnchorPane overview = (AnchorPane) loader.load();
+
+            // Set main menu into the center of root layout.
+            rootLayout.setCenter(overview);
+            
+
+            // Give the controller access to the main app.
+            AddTournamentController controller = loader.getController();
+            controller.setMainApp(this, pr);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void openPRView(String prName){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            
+            loader.setLocation(MainApp.class.getResource("/elorankings/view/PRView.fxml"));
+            AnchorPane overview = (AnchorPane) loader.load();
+
+            // Set main menu into the center of root layout.
+            rootLayout.setCenter(overview);
+            
+
+            // Give the controller access to the main app.
+            PRViewController controller = loader.getController();
+            controller.setMainApp(this, prName);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void openPlayerProfile(String prName, PlayerProfile playerProfile){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            
+            loader.setLocation(MainApp.class.getResource("/elorankings/view/PlayerProfile.fxml"));
+            AnchorPane overview = (AnchorPane) loader.load();
+
+            // Set main menu into the center of root layout.
+            rootLayout.setCenter(overview);
+            
+
+            // Give the controller access to the main app.
+            PlayerProfileController controller = loader.getController();
+            controller.setMainApp(this, getAPr(prName), playerProfile);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
     public void openNewPRSettings1() {
         try {
             FXMLLoader loader = new FXMLLoader();
             
             loader.setLocation(MainApp.class.getResource("/elorankings/view/PRSettings.fxml"));
-            HBox prSetting = (HBox) loader.load();
+            AnchorPane prSetting = (AnchorPane) loader.load();
 
             //Set PR Settings into the center of root layout.
             rootLayout.setCenter(prSetting);
             
-
+            PRSettings prSettings = new PRSettings();
             // Gives the controller access to the PR Settings
             PRSettingsController controller = loader.getController();
-            controller.setMainApp(this);
+            controller.setMainApp(this, prSettings);
             
         } catch (IOException e) {
             e.printStackTrace();
@@ -115,12 +217,12 @@ public class MainApp extends Application {
         }
     }
     
-    public void backToPRSettings1(PRSettings prSettings){
+    public void backToPRSettings1(PRSettings prSettings, String prevMenu){
         try {
             FXMLLoader loader = new FXMLLoader();
             
             loader.setLocation(MainApp.class.getResource("/elorankings/view/PRSettings.fxml"));
-            HBox prSetting = (HBox) loader.load();
+            AnchorPane prSetting = (AnchorPane) loader.load();
 
             //Set PR Settings into the center of root layout.
             rootLayout.setCenter(prSetting);
@@ -130,7 +232,7 @@ public class MainApp extends Application {
             //PRSettingsController controller = new PRSettingsController(prSettings);
             PRSettingsController controller = loader.getController();
             //controller.setMainApp(this);
-            controller.setOldMainApp(this, prSettings);
+            controller.setOldMainApp(this, prSettings, prevMenu);
             
         } catch (IOException e) {
             e.printStackTrace();
@@ -152,10 +254,11 @@ public class MainApp extends Application {
         prList.add(newPR);
     }
     
-    //Returns a single Power Ranking
-    public PRSettings getApr(PRSettings prName){
-        if(prList.contains(prName)){
-            return prList.get(prList.indexOf(prName));
+    //Returns a single Power Ranking using the PR Name
+    public PRSettings getAPr(String prName){
+        for(PRSettings pr : prList){
+            if(pr.getPrName() == prName)
+                return pr;
         }
         return null;
     }
@@ -178,6 +281,5 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
-        
     }
 }

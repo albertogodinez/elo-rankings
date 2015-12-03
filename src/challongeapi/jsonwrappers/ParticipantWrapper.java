@@ -1,7 +1,7 @@
-package jsonwrappers;
+package challongeapi.jsonwrappers;
 
 
-import pojoclasses.Participant;
+import challongeapi.pojoclasses.Participant;
 
 
 public class ParticipantWrapper {

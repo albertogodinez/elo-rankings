@@ -1,10 +1,10 @@
 package challongeapi;
 
 
-import deserializers.MyDeserializer;
-import pojoclasses.Match;
-import pojoclasses.Participant;
-import pojoclasses.Tournament;
+import challongeapi.deserializers.MyDeserializer;
+import challongeapi.pojoclasses.Match;
+import challongeapi.pojoclasses.Participant;
+import challongeapi.pojoclasses.Tournament;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;

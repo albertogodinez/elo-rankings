@@ -4,8 +4,10 @@ package challongeapi;
 import challongeapi.pojoclasses.Match;
 import challongeapi.pojoclasses.Participant;
 import challongeapi.pojoclasses.Tournament;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 /*
@@ -14,12 +16,14 @@ import java.util.List;
 ** to do.
 */
 
+@SuppressWarnings("unused")
 public class ChallongeWrapper {
     private static Tournament tournament;
     private static List<Participant> participants;
     private static List<Match> matches;
-    private static HashMap<String, String> players = new HashMap<String, String>();
-    private static String tournamentName;
+    private static Map<String, String> players;
+	private static String tournamentName;
+    private static String tournamentType;
     private static String id;
     private static int numOfParticipants;
     private static String dateCreated;
@@ -42,6 +46,15 @@ public class ChallongeWrapper {
     
     //Must set API_KEY and USER_NAME beforehand
     public boolean runUrl(String username, String apiKey, String challongeLink){
+       // if(!matches.isEmpty() && !participants.isEmpty() && !players.isEmpty()){
+      //      matches.clear();
+       //     participants.clear();
+       //     players.clear();  
+        //}
+        matches = new ArrayList<Match>();
+        participants = new ArrayList<Participant>();
+        players = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+        
         setUserName(username);
         setApiKey(apiKey);
         
@@ -65,6 +78,7 @@ public class ChallongeWrapper {
         if(tournament == null)
             return false;
         
+        tournamentType = tournament.getTournamentType();
         tournamentName = tournament.getName();
         id = tournament.getId();
         numOfParticipants = tournament.getParticipantCount();
@@ -119,7 +133,7 @@ public class ChallongeWrapper {
     
     
     public Tournament getTournamentInfo(){
-        if(ChallongeWrapper.this.getTournamentInfo(tournamentRequest))
+        if(ChallongeWrapper.getTournamentInfo(tournamentRequest))
             return tournament;
         else
             return null;
@@ -129,9 +143,15 @@ public class ChallongeWrapper {
       The key contains the users playerId and the Object itself contains the
       players tag/name
     */
-    public HashMap<String,String> getParticipants(){
-        if(getParticipants(participantRequest))
-            return players;
+    public List<String> getParticipants(){
+        if(getParticipants(participantRequest)){
+            List<String> playersList = new ArrayList<String>();
+            for(Map.Entry<String,String> entry: players.entrySet()){
+                playersList.add(entry.getValue());
+            }
+            return playersList;
+            
+        }
         else
             return null;
     }
@@ -145,22 +165,26 @@ public class ChallongeWrapper {
         else
             return null;
     }
-    
-    /*public static void main(String[] args){
+    /* THIS WAS USED TO CHECK THIS CLASS
+    public static void main(String[] args){
         //https://alberto_g90:VnU1jHWxzJZ6Rsh2hEkkfm30TVZ2OvxICQGKUYWJ@api.challonge.com/v1/tournaments/i1aunxjd/.json
         ChallongeWrapper challongeWrapper = new ChallongeWrapper();
-        challongeWrapper.setUserName("alberto_g90");
-        challongeWrapper.setApiKey("VnU1jHWxzJZ6Rsh2hEkkfm30TVZ2OvxICQGKUYWJ");
-        challongeWrapper.runUrl("http://challonge.com/zwobz1x");
+        String userName = "alberto_g90",
+                apiKey = "VnU1jHWxzJZ6Rsh2hEkkfm30TVZ2OvxICQGKUYWJ",
+                url = "http://challonge.com/85sf7tkj";
+        challongeWrapper.setUserName(userName);
+        challongeWrapper.setApiKey(apiKey);
+        challongeWrapper.runUrl(userName, apiKey, url);
         
         Tournament tournamentInfo = challongeWrapper.getTournamentInfo();
-        HashMap<String,String> playerInfo = challongeWrapper.getParticipants();
+        List<String> playersInfo = challongeWrapper.getParticipants();
         List<Match> matches1 = challongeWrapper.getMatches();
         
-        System.out.println("Tournament ID: " + tournamentInfo.getId() +
-                           "Tournament Name: " + tournamentInfo.getName() + 
-                           "Tournament Started at: " + tournamentInfo.getStartedAt() + 
-                           "Total Number of Participants" + tournamentInfo.getParticipantCount());
+        System.out.println("\n\nTournament type: " + tournamentInfo.getTournamentType()
+                            + "\nTournament ID: " + tournamentInfo.getId() +
+                           "\nTournament Name: " + tournamentInfo.getName() + 
+                           "\nTournament Started at: " + tournamentInfo.getStartedAt() + 
+                           "\nTotal Number of Participants" + tournamentInfo.getParticipantCount());
         
         for(Match match : matches1){
             System.out.println("Winner: " + match.getWinner() + "    Loser: " + match.getLoser());

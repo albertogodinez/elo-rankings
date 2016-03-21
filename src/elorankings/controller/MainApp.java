@@ -1,21 +1,28 @@
 package elorankings.controller;
 
-
 import elorankings.model.PRSettings;
+import elorankings.model.PRSettingsWrapper;
 import elorankings.model.PlayerProfile;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.prefs.Preferences;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-
-
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 public class MainApp extends Application {
 
@@ -27,6 +34,8 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("EloApp");
+        
+        this.primaryStage.getIcons().add(new Image("file:resources/images/Logo1.png"));
 
         initRootLayout();
 
@@ -47,6 +56,12 @@ public class MainApp extends Application {
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
+            
+            // Try to load last opened person file.
+            File file = getPrSettingsFilePath();
+            if (file != null) {
+                loadPrSettingsDataFromFile(file);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,7 +78,7 @@ public class MainApp extends Application {
             loader.setLocation(MainApp.class.getResource("/elorankings/view/MainMenu.fxml"));
             AnchorPane overview = (AnchorPane) loader.load();
 
-            // Set main menu into the center of root layout.
+                // Set main menu into the center of root layout.
             rootLayout.setCenter(overview);
             
 
@@ -116,6 +131,7 @@ public class MainApp extends Application {
         }
     }
     
+    
     public void openAddTournamentScreen(PRSettings pr){
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -129,6 +145,26 @@ public class MainApp extends Application {
 
             // Give the controller access to the main app.
             AddTournamentController controller = loader.getController();
+            controller.setMainApp(this, pr);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void openTwoPlayerRanker(PRSettings pr){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            
+            loader.setLocation(MainApp.class.getResource("/elorankings/view/TwoPlayerRanker.fxml"));
+            AnchorPane overview = (AnchorPane) loader.load();
+
+            //Set PR Settings into the center of root layout.
+            rootLayout.setCenter(overview);
+            
+
+            // Gives the controller access to the PR Settings
+            TwoPlayerRankerController controller = loader.getController();
             controller.setMainApp(this, pr);
             
         } catch (IOException e) {
@@ -188,6 +224,8 @@ public class MainApp extends Application {
             rootLayout.setCenter(prSetting);
             
             PRSettings prSettings = new PRSettings();
+            prList.add(prSettings);
+            
             // Gives the controller access to the PR Settings
             PRSettingsController controller = loader.getController();
             controller.setMainApp(this, prSettings);
@@ -202,7 +240,7 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader();
             
             loader.setLocation(MainApp.class.getResource("/elorankings/view/PRSettings2.fxml"));
-            HBox prSetting2 = (HBox) loader.load();
+            AnchorPane prSetting2 = (AnchorPane) loader.load();
 
             //Set PR Settings into the center of root layout.
             rootLayout.setCenter(prSetting2);
@@ -278,8 +316,117 @@ public class MainApp extends Application {
     public void setRootLayout(HBox node){
         rootLayout.setCenter(node);
     }
+    
+    /**
+    * Loads person data from the specified file. The current person data will
+    * be replaced.
+    * 
+    * @param file
+    */
+    public void loadPrSettingsDataFromFile(File file) throws FileNotFoundException, IOException {
+        try {
+           JAXBContext context = JAXBContext.newInstance(PRSettingsWrapper.class);
+           Unmarshaller um = context.createUnmarshaller();
+           
+           um.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());    
+
+           // Reading XML from the file and unmarshalling.    
+           PRSettingsWrapper wrapper = (PRSettingsWrapper) um.unmarshal(file);
+           
+           
+           prList.clear();
+           prList = wrapper.getPrList();
+           
+           //System.out.println("unmarshal test: " + wrapper.getPrList().get(1).getChallongeApiKey());
+           //System.out.println("unmarshal test: " + wrapper.getPrList().get(1).getAllPlayers().get(0).getPlayersTag());
+           //System.out.println("unmarshal test: " + wrapper.getPrList().get(1).getAllPlayers().get(0).getPlayersStatus());
+           //System.out.println(prList.size());
+           //System.out.println(prList.get(2).getChallongeApiKey());
+           // Save the file path to the registry.
+           setPrSettingsFilePath(file);
+
+        } catch (JAXBException e) { 
+           System.out.println(e.getStackTrace());
+           Alert alert = new Alert(AlertType.ERROR);
+           alert.setTitle("Error");
+           alert.setHeaderText("Could not load data");
+           alert.setContentText("Could not load data from file:\n" + file.getPath());
+
+           alert.showAndWait();
+        } 
+    }
+    
+     /**
+     * Saves the current person data to the specified file.
+     * 
+     * @param file
+     */
+    public void savePrSettingsDataToFile(File file) {
+        try {
+            JAXBContext context = JAXBContext
+                    .newInstance(PRSettingsWrapper.class);
+            Marshaller m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            // Wrapping our person data.
+            PRSettingsWrapper wrapper = new PRSettingsWrapper();
+            wrapper.setPrList(prList);
+            // Marshalling and saving XML to the file.
+            m.marshal(wrapper, file);
+
+            // Save the file path to the registry.
+            setPrSettingsFilePath(file);
+        } catch (Exception e) { // catches ANY exception
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Could not save data");
+            alert.setContentText("Could not save data to file:\n" + file.getPath());
+
+            alert.showAndWait();
+        }
+    }
+    
+     /**
+     * Returns the prsettings file preference, i.e. the file that was last opened.
+     * The preference is read from the OS specific registry. If no such
+     * preference can be found, null is returned.
+     * 
+     * @return
+     */
+    public File getPrSettingsFilePath() {
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        String filePath = prefs.get("filePath", null);
+        if (filePath != null) {
+            System.out.println("File path: " + filePath);
+            return new File(filePath);
+        } else {
+            return null;
+        }
+    }
+    /**
+     * Sets the file path of the currently loaded file. The path is persisted in
+     * the OS specific registry.
+     * 
+     * @param file the file or null to remove the path
+     */
+    public void setPrSettingsFilePath(File file) {
+        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+        if (file != null) {
+            prefs.put("filePath", file.getPath());
+
+            // Update the stage title.
+            //primaryStage.setTitle("EloApp - " + file.getName());
+        } else {
+            prefs.remove("filePath");
+
+            // Update the stage title.
+            //primaryStage.setTitle("EloApp");
+        }
+    }
+
+    
 
     public static void main(String[] args) {
-        launch(args);
+       launch(args);
     }
 }

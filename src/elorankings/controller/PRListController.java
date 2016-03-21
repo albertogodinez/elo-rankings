@@ -10,8 +10,8 @@ import javafx.scene.control.ListView;
 
 public class PRListController {
     @FXML
-    private ListView prList;
-    public static final ObservableList data = 
+    private ListView<String> prList;
+    public static final ObservableList<String> data = 
         FXCollections.observableArrayList();
     
     private ObservableList<PRSettings>tournaments;
@@ -34,8 +34,9 @@ public class PRListController {
         prList.setEditable(true);      
         tournaments = this.mainApp.getPRs();
         for(PRSettings prSettings : tournaments){
-            if(!data.contains(prSettings.getPrName()))
+            if(!data.contains(prSettings.getPrName())){
                 data.add(prSettings.getPrName());
+            }
         }
         prList.setItems(data);
     }

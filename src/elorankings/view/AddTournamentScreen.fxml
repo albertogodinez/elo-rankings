@@ -7,20 +7,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="700.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="elorankings.controller.AddTournamentController">
+<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="700.0" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.AddTournamentController">
    <children>
       <Button fx:id="backButton" layoutX="14.0" layoutY="459.0" mnemonicParsing="false" onAction="#backToPROptionsScreen" text="Back">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <Label layoutX="196.0" layoutY="75.0" text="Please enter Challonge tournament link" textAlignment="CENTER" wrapText="true">
+      <Label layoutX="204.0" layoutY="145.0" text="Please enter Challonge tournament link" textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <TextField fx:id="challongeLink" layoutX="148.0" layoutY="107.0" prefHeight="27.0" prefWidth="391.0" promptText="challonge.com/bracketName" />
-      <Button layoutX="230.0" layoutY="147.0" mnemonicParsing="false" onAction="#addTournament" text="Add tournament to Power Ranking" />
+      <TextField fx:id="challongeLink" layoutX="156.0" layoutY="177.0" prefHeight="27.0" prefWidth="391.0" promptText="challonge.com/bracketName" styleClass="textField" />
+      <Button layoutX="238.0" layoutY="217.0" mnemonicParsing="false" onAction="#addTournament" text="Add tournament to Power Ranking" />
    </children>
+   <styleClass>
+      <String fx:value="background" />
+      <String fx:value="label-header" />
+      <String fx:value="label-bright" />
+   </styleClass>
 </AnchorPane>

@@ -39,7 +39,6 @@ public class TournamentInfo {
         
         try {
             HttpResponse response = client.execute(request);
-            //System.out.print(response.getStatusLine().getStatusCode());
             HttpEntity entity = response.getEntity();
             if(entity != null){
                 //Allows me to search through the Tournament Object using the 
@@ -90,7 +89,8 @@ public class TournamentInfo {
                
                
                if(jsonElement.isJsonArray()){
-                   Iterator itor = jsonElement.getAsJsonArray().iterator();
+                   @SuppressWarnings("rawtypes")
+				Iterator itor = jsonElement.getAsJsonArray().iterator();
                    
                    while(itor.hasNext()){
                        JsonObject jObject = (JsonObject) itor.next();
@@ -116,9 +116,6 @@ public class TournamentInfo {
             if(entity != null){
                 //Allows me to search through the Participant Object using the 
                 //Participant/Participants POJO
-                //Gson gson = new GsonBuilder().
-                        //registerTypeAdapter(MatchesWrapper.class, new MyDeserializer<>()).
-                        //create();
                 ContentType contentType = ContentType.getOrDefault(entity);
                 Charset charset = contentType.getCharset();
                 Reader reader = new InputStreamReader(entity.getContent(), charset);
@@ -132,6 +129,7 @@ public class TournamentInfo {
                
                
                if(jsonElement.isJsonArray()){
+                   @SuppressWarnings("rawtypes")
                    Iterator itor = jsonElement.getAsJsonArray().iterator();
                    
                    while(itor.hasNext()){

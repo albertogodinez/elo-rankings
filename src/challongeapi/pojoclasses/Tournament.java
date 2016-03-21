@@ -8,6 +8,11 @@ public class Tournament {
     private String id;
     private int participants_count;
     private String started_at;
+    private String tournament_type;
+    
+    public String getTournamentType(){
+        return tournament_type;
+    }
     
     public String getName(){
         return name;

@@ -4,13 +4,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.MainMenuController">
+<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="700.0" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.MainMenuController">
    <children>
       <Pane prefHeight="500.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button fx:id="viewPR" layoutX="250.0" layoutY="43.0" mnemonicParsing="false" onAction="#openPRList" prefHeight="60.0" prefWidth="200.0" text="View Power Rankings" textAlignment="CENTER" />
-            <Button fx:id="createPR" layoutX="250.0" layoutY="146.0" mnemonicParsing="false" onAction="#handleNewPR" prefHeight="60.0" prefWidth="200.0" text="Create a new Power Ranking" textAlignment="CENTER" wrapText="true" />
+            <Button fx:id="viewPR" layoutX="261.0" layoutY="171.0" mnemonicParsing="false" onAction="#openPRList" prefHeight="60.0" prefWidth="200.0" text="View Power Rankings" textAlignment="CENTER" />
+            <Button fx:id="createPR" layoutX="261.0" layoutY="270.0" mnemonicParsing="false" onAction="#handleNewPR" prefHeight="60.0" prefWidth="200.0" text="Create a new Power Ranking" textAlignment="CENTER" wrapText="true" />
          </children>
       </Pane>
    </children>
+   <styleClass>
+      <String fx:value="background" />
+      <String fx:value="label-header" />
+      <String fx:value="label-bright" />
+   </styleClass>
 </AnchorPane>

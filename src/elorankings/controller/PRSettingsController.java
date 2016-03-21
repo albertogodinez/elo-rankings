@@ -2,17 +2,20 @@ package elorankings.controller;
 
 
 import elorankings.model.PRSettings;
+import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
 
 
+@SuppressWarnings("rawtypes")
 public class PRSettingsController {
     @FXML
     private TextField prName;
@@ -22,7 +25,7 @@ public class PRSettingsController {
     private TextField challongeUsername;
     @FXML
     private TextField challongeApiKey;
-    @FXML
+	@FXML
     private ComboBox showPlacingDiff;
     @FXML
     private TextField numTourneysNeeded;
@@ -61,7 +64,8 @@ public class PRSettingsController {
     }
     
     
-    @FXML
+    @SuppressWarnings("unchecked")
+	@FXML
     private void initialize(){
         removeInnactive.getSelectionModel().selectedItemProperty().addListener(
             (ObservableValue observableValue, Object oldSelection, Object newSelection) -> {
@@ -128,9 +132,9 @@ public class PRSettingsController {
     public void setMainApp(MainApp mainApp, PRSettings prSettings) {
         this.mainApp = mainApp;
         newPRSettings = prSettings;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/PRSettings.fxml"));
-        loader.setController(this);
         
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/MainMenu.fxml"));
+        loader.setController(this);
     }
     
   
@@ -163,7 +167,7 @@ public class PRSettingsController {
     }
     
     private void loadPRSettings2(){
-        mainApp.updatePR(newPRSettings);
+        //mainApp.updatePR(newPRSettings);
         mainApp.openNewPRSettings2(newPRSettings);
     }
 
@@ -227,6 +231,16 @@ public class PRSettingsController {
 
     }
 
+    private boolean prNameTaken(){
+        String tempName = prName.getText();
+        
+        for(PRSettings tempPr : mainApp.getPRs()){
+            if(tempPr.getPrName().equals(tempName))
+                return true;
+        }
+        
+        return false;
+    }
 /**
  * Called whenever user clicks BACK
  * Loads the main menu
@@ -239,11 +253,12 @@ public class PRSettingsController {
   
     @FXML
     private void savePRSettings(){
-        if(checkIfEmpty()){
+        boolean prNameTaken = prNameTaken();
+        if(checkIfEmpty() && !prNameTaken){
             boolean tempBool;
         
             newPRSettings.setPrName(prName.getText());
-            newPRSettings.setInitScore(Integer.parseInt(initScore.getText()));
+            newPRSettings.setInitScore(Double.parseDouble(initScore.getText()));
             newPRSettings.setChallongeUsername(challongeUsername.getText());
             newPRSettings.setChallongeApiKey(challongeApiKey.getText());
             newPRSettings.setNumTourneysNeeded(Integer.parseInt(numTourneysNeeded.getText()));
@@ -262,11 +277,6 @@ public class PRSettingsController {
                 newPRSettings.setNumTourneysForInnactive(Integer.parseInt(numTourneysForInnactive.getText()));
                 newPRSettings.setNumTourneysForActive(Integer.parseInt(numTourneysForActive.getText()));
             }
-            //I'm pretty sure I'm checking for this twice, so check later to make sure i'm not
-            /*if(!numTourneysForInnactive.disabledProperty().getValue() && !numTourneysForActive.disabledProperty().getValue()){
-                newPRSettings.setNumTourneysForActive(Integer.parseInt(numTourneysForInnactive.getText()));
-                newPRSettings.setNumTourneysForActive(Integer.parseInt(numTourneysForActive.getText()));
-            }*/
             
             if(!implementPointDecay.disabledProperty().getValue()){
                 tempBool = "Yes".equals(implementPointDecay.getValue().toString());
@@ -279,6 +289,14 @@ public class PRSettingsController {
                 else
                     newPRSettings.setPointsRemoved(-1);
             }
+            
+            File prSettingsFile = mainApp.getPrSettingsFilePath();
+            if(prSettingsFile != null){
+                mainApp.savePrSettingsDataToFile(prSettingsFile);
+            }
+            else{
+                handleSaveAs();
+            }
             //After it is saved, then the second page is loaded*/
             //if it is not loaded from the options screen
             if(!prevMenu.equals("optionsScreen")){
@@ -287,8 +305,52 @@ public class PRSettingsController {
         }
         else{
             //Display error message to user
-            System.out.println("Please fill out all of the form");
-            //System.out.print("There are empty textfields");
+            String title,
+                    headerText,
+                    contextText;
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            
+            if(prNameTaken){
+                title = "PR Name Taken";
+                headerText = "PR Name '" + prName.getText() + "' is already taken.";
+                contextText = "Please enter another name for this PR";
+            }
+            else{
+                title = "Empty Fields";
+                headerText = "Certain fields have not been filled out";
+                contextText = "Please make sure you fill out all available fields";
+            }
+                
+            alert.setTitle(title);
+            alert.setHeaderText(headerText);
+            alert.setContentText(contextText);
+
+            alert.showAndWait();
+        }
+    }
+    
+     /**
+     * Opens a FileChooser to let the user select a file to save to.
+     */
+    //@FXML
+    private void handleSaveAs() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "XML files (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Show save file dialog
+        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
+       
+        if (file != null) {
+            // Make sure it has the correct extension
+            if (!file.getPath().endsWith(".xml")) {
+                file = new File(file.getPath() + ".xml");
+            }
+            mainApp.savePrSettingsDataToFile(file);
         }
     }
 }

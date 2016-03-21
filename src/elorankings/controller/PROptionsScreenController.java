@@ -33,6 +33,11 @@ public class PROptionsScreenController {
     }
     
     @FXML
+    public void rankTwoPlayers(){
+        mainApp.openTwoPlayerRanker(mainApp.getAPr(prName.getText()));
+    }
+    
+    @FXML
     public void editSettings(){
         mainApp.backToPRSettings1(mainApp.getAPr(prName.getText()), "optionsScreen");
     }

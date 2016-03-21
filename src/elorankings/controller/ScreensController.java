@@ -14,7 +14,8 @@ import javafx.scene.layout.StackPane;
  * @author Alberto
  */
 public class ScreensController extends StackPane{
-    private HashMap<String, Node> screens = new HashMap();
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	private HashMap<String, Node> screens = new HashMap();
     
     public void addScreen(String name, Node screen) { 
        screens.put(name, screen); 

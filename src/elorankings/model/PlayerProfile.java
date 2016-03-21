@@ -1,48 +1,53 @@
 package elorankings.model;
 
-
-import java.time.LocalDate;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-
-
 
 public class PlayerProfile {
     private final StringProperty playersTag;
-    private List<StringProperty> possibleNames = new ArrayList<>();
-    private HashMap<String, Integer> playerRecords = new HashMap<String, Integer>();
     private final DoubleProperty score;
     private final IntegerProperty ranking;
     private final IntegerProperty tourneysEntered;
     private final IntegerProperty setsPlayed;
     private final StringProperty lastDateEntered;
     private final StringProperty playersStatus;
-    private int kRating;
     private int playerId;
-    private int lastDateEnteredInt = 1;
-    private int tournamentsMissed = 0;
+    private int tourneySetsPlayed = 1;
+    private int tourneySetsLost = 0;
+    /*
+    **This represents the last tournment that the player entered, by obtaining 
+    **the total number.
+    */
+    private int lastTournamentEntered = 1;
+    //Counts number of tournaments player has entered while being considered inactive
+    private int tourneysWhileInactive = 0;
     
     public PlayerProfile(String playersTag, Double score, Integer id){
         this.playersTag = new SimpleStringProperty(playersTag);
         this.score = new SimpleDoubleProperty(score);
-        //If player is innactive or unrated, then set to -1
+        //If player is inactive or unrated, then set to -1
         ranking = new SimpleIntegerProperty(1);
         tourneysEntered = new SimpleIntegerProperty(0);
         setsPlayed = new SimpleIntegerProperty(0);
-        //Players Status include, unrated, active, innactive
+        //Players Status include, unrated, active, inactive
         playersStatus = new SimpleStringProperty("unrated");
-        lastDateEntered = new SimpleStringProperty("");
+        lastDateEntered = new SimpleStringProperty("0");
         playerId = id;
+    }
+    
+    public PlayerProfile(){
+        playersTag = new SimpleStringProperty("");
+        score = new SimpleDoubleProperty();
+        ranking = new SimpleIntegerProperty();
+        tourneysEntered = new SimpleIntegerProperty();
+        setsPlayed = new SimpleIntegerProperty();
+        playersStatus = new SimpleStringProperty("");
+        lastDateEntered = new SimpleStringProperty("0");
+        playerId = 1;
     }
     
     public StringProperty playersTag(){
@@ -74,7 +79,7 @@ public class PlayerProfile {
         return ranking;
     }
     
-    public Integer getRanking(){
+    public int getRanking(){
         return ranking.get();
     }
     
@@ -82,11 +87,40 @@ public class PlayerProfile {
         this.ranking.set(ranking);
     }
     
+    public int getTourneySetsPlayed(){
+        return tourneySetsPlayed;
+    }
+    
+    public void setTourneySetsPlayed(int tourneySetsPlayed){
+        this.tourneySetsPlayed = tourneySetsPlayed;
+    }
+    
+    public void incrementTourneySetsPlayed(){
+        tourneySetsPlayed++;
+    }
+    
+    public int getTourneySetsLost(){
+        return tourneySetsLost;
+    }
+    
+    public void setTourneySetsLost(int tourneySetsLost){
+        this.tourneySetsLost = tourneySetsLost;
+    }
+    
+    public void incrementTourneySetsLost(){
+        tourneySetsLost++;
+    }
+    
+    public void resetTourneySets(){
+        tourneySetsLost = 0;
+        tourneySetsPlayed = 1;
+    }
+    
     public IntegerProperty tourneysEntered(){
         return tourneysEntered;
     }
     
-    public Integer getTourneysEntered(){
+    public int getTourneysEntered(){
         return tourneysEntered.get();
     }
     
@@ -96,9 +130,6 @@ public class PlayerProfile {
     
     public void incrementTournamentsEntered(){
         tourneysEntered.set(tourneysEntered.get()+1);
-        if(playersStatus.equals("inactive"))
-            tournamentsMissed--;
-       //if(tourneysEntered.get())
     }
     
     public int getSetsPlayed(){
@@ -107,6 +138,10 @@ public class PlayerProfile {
     
     public void setSetsPlayed(int setsPlayed){
         this.setsPlayed.set(setsPlayed);
+    }
+    
+    public void incrementSetsPlayed(){
+        setsPlayed.set(setsPlayed.get()+1);
     }
     
     public StringProperty playersStatus(){
@@ -121,9 +156,6 @@ public class PlayerProfile {
         this.playersStatus.set(playersStatus);
     }
     
-    public StringProperty lastDateEntered(){
-        return lastDateEntered;
-    }
     
     public String getLastDateEntered(){
         return lastDateEntered.get();
@@ -133,12 +165,11 @@ public class PlayerProfile {
         this.lastDateEntered.set(lastDateEntered);
         String[] splitDate = lastDateEntered.split("/");
         int temp;
-        lastDateEnteredInt = 1;
+        lastTournamentEntered = 1;
         for(int i = 0; i<splitDate.length; i++){
             temp = Integer.parseInt(splitDate[i]);
-            lastDateEnteredInt *=temp;
+            lastTournamentEntered *=temp;
         }
-        System.out.println("In PlayerProfile class, " + lastDateEntered + " : " + lastDateEnteredInt);
     }
     
     
@@ -150,14 +181,30 @@ public class PlayerProfile {
         return playerId;
     }
     
-    public void incrementTournamentsMissed(){
-        tournamentsMissed++;
+    /*TODO: Probably going to have to delete this method
+    **so remember to check later
+    */
+    public void incrementTourneysEnteredWhileInactive(){
+        tourneysWhileInactive++;
+    }
+    /*TODO: Probably going to have to delete this method
+    **so remember to check later
+    */
+    public int getTourneysWhileInactive(){
+        return tourneysWhileInactive;
     }
     
-    public int getTournamentsMissed(){
-        return tournamentsMissed;
-
-    //TODO I'm going to have to create a function in PRSettings to parse through
-                //all active players and change accordingly!'
+    //Sets the total number of tournaments entered while inactive
+    //*Good to use to set it to 0 when player first becomes inactive
+    public void setTourneysWhileInactive(int numInactive){
+        tourneysWhileInactive = numInactive;
+    }
+    
+    public void setLastTournamentEntered(int tournamentNumber){
+        lastTournamentEntered = tournamentNumber;
+    }
+    
+    public int getLastTournamentEntered(){
+        return lastTournamentEntered;
     }
 }

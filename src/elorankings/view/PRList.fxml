@@ -7,15 +7,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.PRListController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" styleClass="background" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.PRListController">
    <children>
-      <ListView fx:id="prList" layoutX="250.0" layoutY="150.0" prefHeight="200.0" prefWidth="200.0" />
-      <Button layoutX="14.0" layoutY="459.0" mnemonicParsing="false" onAction="#backToMainMenu" text="Back" textAlignment="CENTER">
+      <ListView fx:id="prList" layoutX="251.0" layoutY="151.0" prefHeight="300.0" prefWidth="300.0" />
+      <Button layoutX="14.0" layoutY="545.0" mnemonicParsing="false" onAction="#backToMainMenu" text="Back" textAlignment="CENTER">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <Button layoutX="538.0" layoutY="459.0" mnemonicParsing="false" onAction="#goToSelectedTournament" text="Edit Tournament" textAlignment="CENTER">
+      <Button layoutX="630.0" layoutY="550.0" mnemonicParsing="false" onAction="#goToSelectedTournament" text="Edit Tournament" textAlignment="CENTER">
          <font>
             <Font size="16.0" />
          </font>

@@ -12,12 +12,18 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 /*
    Model class for each of the Power Rankings
 */
+@XmlType(name="prsetting")
 public class PRSettings {
     //Holds all of the players that are in this PR
     //Considering changing to maps instead, but will change later
+    @XmlElementWrapper(name="players")
+    @XmlElement(name ="player")
     private ArrayList<PlayerProfile> playersList = new ArrayList<PlayerProfile>();
     private final StringProperty prName;
     private final DoubleProperty initScore;
@@ -43,13 +49,18 @@ public class PRSettings {
     //This is the amount of points that are taken off per week for players
     //who are going through decay.
     private final IntegerProperty pointsRemoved;
-    private boolean samePointsRemoved = true;
+    private boolean samePointsRemoved;
     //This keeps track of the players current id
-    private int currentId=0;
+    private int currentId;
+    /*
+    **This will increment every single time a new tournament is added
+    **and will be used to see how many tournaments the user has missed
+    */
+    private int totalNumTournaments;
     
     public PRSettings(){
         prName = new SimpleStringProperty("");
-        initScore = new SimpleDoubleProperty();
+        initScore = new SimpleDoubleProperty(2);
         challongeUsername = new SimpleStringProperty("");
         challongeApiKey = new SimpleStringProperty("");
         showPlacingDiff = new SimpleBooleanProperty();
@@ -62,6 +73,9 @@ public class PRSettings {
         implementPointDecay = new SimpleBooleanProperty(false);
         startOfDecay = new SimpleIntegerProperty(3);
         pointsRemoved = new SimpleIntegerProperty(5);
+        samePointsRemoved = true;
+        currentId=0;
+        totalNumTournaments=0;
     }
     
     public StringProperty prName(){
@@ -76,6 +90,7 @@ public class PRSettings {
         this.prName.set(prName);
     }
     
+    
     public DoubleProperty initScore(){
         return initScore;
     }
@@ -84,7 +99,7 @@ public class PRSettings {
         return initScore.get();
     }
     
-    public void setInitScore(int initScore){
+    public void setInitScore(double initScore){
         this.initScore.set(initScore);
     }
     
@@ -165,10 +180,6 @@ public class PRSettings {
         this.removeInnactive.set(removeInnactive);
     }
     
-    public IntegerProperty numTourneysForInnactive(){
-        return numTourneysForInnactive;
-    }
-    
     public int getNumTourneysForInnactive(){
         return numTourneysForInnactive.get();
     }
@@ -176,11 +187,7 @@ public class PRSettings {
     public void setNumTourneysForInnactive(int numTourneysForInnactive){
         this.numTourneysForInnactive.set(numTourneysForInnactive);
     }
-    
-    public IntegerProperty numTourneysForActive(){
-        return numTourneysForActive;
-    }
-    
+
     public int getNumTourneysForActive(){
         return numTourneysForActive.get();
     }
@@ -188,11 +195,7 @@ public class PRSettings {
     public void setNumTourneysForActive(int numTourneysForActive){
         this.numTourneysForActive.set(numTourneysForActive);
     }
-    
-    public BooleanProperty implementPointDecay(){
-        return implementPointDecay;
-    }
-    
+
     public boolean getImplementPointDecay(){
         return implementPointDecay.get();
     }
@@ -200,21 +203,13 @@ public class PRSettings {
     public void setImplementPointDecay(boolean implementPointDecay){
         this.implementPointDecay.set(implementPointDecay);
     }
-    
-    public IntegerProperty startOfDecay(){
-        return startOfDecay;
-    }
-    
+
     public int getStartOfDecay(){
         return startOfDecay.get();
     }
     
     public void setStartOfDecay(int startOfDecay){
         this.startOfDecay.set(startOfDecay);
-    }
-    
-    public IntegerProperty pointsRemoved(){
-        return pointsRemoved;
     }
     
     public int getPointsRemoved(){
@@ -234,7 +229,17 @@ public class PRSettings {
         }
     }
     
+    public void incrementTotalTournaments(){
+        totalNumTournaments++;
+    }
     
+    public int getTotalNumTournaments(){
+        return totalNumTournaments;
+    }
+    
+    public void setTotalNumTournaments(int totalNumTournaments){
+        this.totalNumTournaments = totalNumTournaments;
+    }
     
     public void sortByTag(){
         Collections.sort(playersList, new PlayerTagComparator());
@@ -317,16 +322,44 @@ public class PRSettings {
             return true;
     }
     
-    public Boolean updateTournamentsEntered(String playerTag, String dateOfTournament){
-        int playerIndex = findPlayerIndexUsingTag(playerTag);
-        if(playerIndex == -1)
-            return false;
-        playersList.get(playerIndex).setLastDateEntered(dateOfTournament);
-        playersList.get(playerIndex).incrementTournamentsEntered();
-        if(playersList.get(playerIndex).getTourneysEntered() >= numTourneysNeeded.get()){
-            String status = playersList.get(playerIndex).getPlayersStatus();
-            if(status.equals("unrated"))
-                playersList.get(playerIndex).setPlayersStatus("active");
+    public boolean containsCaseInsensitive(String s, List<String> l){
+        for (String string : l){
+            if (string.equalsIgnoreCase(s)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public Boolean updateTournamentsEntered(List<String> participants, String dateOfTournament){
+        for(int i=0; i< playersList.size(); i++){
+            //This is done if a player in the PR entered the tournament
+            if(containsCaseInsensitive(playersList.get(i).getPlayersTag(), participants)){
+                System.out.println(playersList.get(i).getPlayersTag() + " is being updated.\n");
+                playersList.get(i).setLastDateEntered(dateOfTournament);
+                playersList.get(i).incrementTournamentsEntered();
+                playersList.get(i).setLastTournamentEntered(totalNumTournaments);
+                if(playersList.get(i).getTourneysEntered() >= numTourneysNeeded.get()){
+                    String status = playersList.get(i).getPlayersStatus();
+                    if(status.equals("unrated"))
+                        playersList.get(i).setPlayersStatus("active");
+                }
+                
+                if(playersList.get(i).getPlayersStatus().equals("inactive")){
+                    playersList.get(i).incrementTourneysEnteredWhileInactive();
+                    if(playersList.get(i).getTourneysWhileInactive() >= numTourneysForActive.get())
+                        playersList.get(i).setPlayersStatus("active");
+                }
+                playersList.get(i).resetTourneySets();
+            }
+            else{
+                if((totalNumTournaments - playersList.get(i).getLastTournamentEntered()) >= numTourneysForInnactive.get()){
+                    if(playersList.get(i).getPlayersStatus().equals("active")){
+                        playersList.get(i).setTourneysWhileInactive(0);
+                        playersList.get(i).setPlayersStatus("inactive");
+                    }
+                }
+            }
         }
         return true;
     }
@@ -350,6 +383,10 @@ public class PRSettings {
     
     public boolean getSamePointsRemoved(){
         return samePointsRemoved;
+    }
+    
+    public void setSamePointsRemoved(boolean samePointsRemoved){
+        this.samePointsRemoved = samePointsRemoved;
     }
     
     public void printAllPlayers(){
@@ -376,9 +413,18 @@ public class PRSettings {
         return null;
     }
     
+    public int getCurrentId(){
+        return currentId;
+    }
+    
+    public void setCurrentId(int currentId){
+        this.currentId = currentId;
+    }
+    
     class PlayerTagComparator implements Comparator<PlayerProfile>{
         @Override
         public int compare(PlayerProfile p1, PlayerProfile p2){
+            //System.out.println("p1: " + p1.getPlayersTag() + " p2: " + p2.getPlayersTag());
             return p1.getPlayersTag().compareToIgnoreCase(p2.getPlayersTag());
         }
     }

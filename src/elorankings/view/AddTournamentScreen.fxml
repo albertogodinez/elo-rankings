@@ -7,9 +7,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="700.0" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.AddTournamentController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.AddTournamentController">
    <children>
-      <Button fx:id="backButton" layoutX="14.0" layoutY="459.0" mnemonicParsing="false" onAction="#backToPROptionsScreen" text="Back">
+      <Button fx:id="backButton" layoutX="16.0" layoutY="551.0" mnemonicParsing="false" onAction="#backToPROptionsScreen" text="Back">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
@@ -21,6 +21,11 @@
       </Label>
       <TextField fx:id="challongeLink" layoutX="156.0" layoutY="177.0" prefHeight="27.0" prefWidth="391.0" promptText="challonge.com/bracketName" styleClass="textField" />
       <Button layoutX="238.0" layoutY="217.0" mnemonicParsing="false" onAction="#addTournament" text="Add tournament to Power Ranking" />
+      <Button layoutX="698.0" layoutY="551.0" mnemonicParsing="false" onAction="#saveUpdate" text="Save">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Button>
    </children>
    <styleClass>
       <String fx:value="background" />

@@ -1,5 +1,6 @@
 package elorankings.controller;
 
+import elorankings.formula.DecimalUtils;
 import elorankings.model.PRSettings;
 import elorankings.model.PlayerProfile;
 import java.io.File;
@@ -24,6 +25,12 @@ public class PlayerProfileController {
     private Label lastDateEntered;
     @FXML
     private TextField playersScore;
+    @FXML
+    private Label tournamentsBeforeInactive;
+    @FXML
+    private Label previousScore;
+    @FXML
+    private Label previousRanking;
     
     MainApp mainApp;
     PlayerProfile playerProfile;
@@ -52,7 +59,8 @@ public class PlayerProfileController {
         else
             isNewPlayer = true;
         
-        
+        System.out.println(playerProfile.getLastDateMissed());
+        System.out.println(playerProfile.getLastDateEntered());
         fillProfile();
         
         
@@ -63,8 +71,8 @@ public class PlayerProfileController {
 	private void fillProfile(){
         if(!isNewPlayer){
             playersTag.setText(playerProfile.getPlayersTag());
-            playersScore.setText(Double.toString(playerProfile.getScore()));
-            System.out.println("Tourneys entered: " + playerProfile.getTourneysEntered());
+            playersScore.setText(Double.toString(DecimalUtils.round(playerProfile.getScore(), 2)));
+            //System.out.println("Tourneys entered: " + playerProfile.getTourneysEntered());
             totalTournaments.setText(Integer.toString(playerProfile.getTourneysEntered()));
             
             if(playerProfile.getLastDateEntered() != null && playerProfile.getLastDateEntered().length()>0)
@@ -73,6 +81,10 @@ public class PlayerProfileController {
                 lastDateEntered.setText("Player has not entered any tournaments.");
             
             playersStatus.getSelectionModel().select(playerProfile.getPlayersStatus());
+
+            tournamentsBeforeInactive.setText(Integer.toString(pr.getNumTourneysForInactive() - playerProfile.getTournamentsMissed()));
+            previousScore.setText(Double.toString(DecimalUtils.round(playerProfile.getPreviousScore(), 2)));
+            previousRanking.setText(Integer.toString(playerProfile.getPreviousRanking()));
         }
         else{
             playersScore.setText(Double.toString(pr.getInitScore()));

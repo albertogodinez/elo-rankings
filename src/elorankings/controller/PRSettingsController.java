@@ -57,7 +57,7 @@ public class PRSettingsController {
     private MainApp mainApp;
     private String prevMenu = "";
     
-    PRSettings newPRSettings;
+    PRSettings newPr;
     
   
     public PRSettingsController(){
@@ -129,9 +129,9 @@ public class PRSettingsController {
   * @param mainApp
   * @param prSettings
 **/
-    public void setMainApp(MainApp mainApp, PRSettings prSettings) {
+    public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
-        newPRSettings = prSettings;
+        newPr = new PRSettings();
         
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/MainMenu.fxml"));
         loader.setController(this);
@@ -168,7 +168,8 @@ public class PRSettingsController {
     
     private void loadPRSettings2(){
         //mainApp.updatePR(newPRSettings);
-        mainApp.openNewPRSettings2(newPRSettings);
+    	mainApp.getPRs().add(newPr);
+        mainApp.openNewPRSettings2(newPr);
     }
 
     public void setOldMainApp(MainApp mainApp, PRSettings prSettings, String prevMenu){
@@ -177,35 +178,35 @@ public class PRSettingsController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/PRSettings.fxml"));
         loader.setController(this);
         
-        newPRSettings = prSettings;
-        prName.setText(newPRSettings.getPrName());
-        initScore.setText(Integer.toString((int) newPRSettings.getInitScore()));
-        challongeUsername.setText(newPRSettings.getChallongeUsername());
-        challongeApiKey.setText(newPRSettings.getChallongeApiKey());
-        numTourneysNeeded.setText(Integer.toString((int)newPRSettings.getNumTourneysNeeded()));
-        numSetsNeeded.setText(Integer.toString((int)newPRSettings.getNumSetsNeeded()));
+        newPr = prSettings;
+        prName.setText(newPr.getPrName());
+        initScore.setText(Integer.toString((int) newPr.getInitScore()));
+        challongeUsername.setText(newPr.getChallongeUsername());
+        challongeApiKey.setText(newPr.getChallongeApiKey());
+        numTourneysNeeded.setText(Integer.toString((int)newPr.getNumTourneysNeeded()));
+        numSetsNeeded.setText(Integer.toString((int)newPr.getNumSetsNeeded()));
         
-        if(newPRSettings.getShowPlacingDiff())
+        if(newPr.getShowPlacingDiff())
             showPlacingDiff.getSelectionModel().selectFirst();
         else
             showPlacingDiff.getSelectionModel().selectLast();
         
-        if(newPRSettings.getShowPointDiff())
+        if(newPr.getShowPointDiff())
             showPointDiff.getSelectionModel().selectFirst();
         else
             showPointDiff.getSelectionModel().selectLast();
         
-        if(newPRSettings.getRemoveInnactive()){
+        if(newPr.getRemoveInactive()){
             removeInnactive.getSelectionModel().selectFirst();
-            numTourneysForInnactive.setText(Integer.toString(newPRSettings.getNumTourneysForInnactive()));
-            numTourneysForActive.setText(Integer.toString(newPRSettings.getNumTourneysForActive()));
+            numTourneysForInnactive.setText(Integer.toString(newPr.getNumTourneysForInactive()));
+            numTourneysForActive.setText(Integer.toString(newPr.getNumTourneysForActive()));
             
-            if(newPRSettings.getImplementPointDecay()){
+            if(newPr.getImplementPointDecay()){
                 implementPointDecay.getSelectionModel().selectFirst();
-                startOfDecay.setText(Integer.toString(newPRSettings.getStartOfDecay()));
-                if(newPRSettings.getSamePointsRemoved()){
+                startOfDecay.setText(Integer.toString(newPr.getStartOfDecay()));
+                if(newPr.getSamePointsRemoved()){
                     removeSameCheckBox.setSelected(true);
-                    pointsRemoved.setText(Integer.toString(newPRSettings.getPointsRemoved()));
+                    pointsRemoved.setText(Integer.toString(newPr.getPointsRemoved()));
                 }
                 else
                     removeAvgCheckBox.setSelected(true);
@@ -225,7 +226,7 @@ public class PRSettingsController {
                 mainApp.openPROptionsScreen(prSettings.getPrName());
             });
             backButton.setOnAction((event)->{
-                mainApp.openPROptionsScreen(newPRSettings.getPrName());
+                mainApp.openPROptionsScreen(newPr.getPrName());
             });
         }
 
@@ -252,42 +253,49 @@ public class PRSettingsController {
     
   
     @FXML
-    private void savePRSettings(){
-        boolean prNameTaken = prNameTaken();
+    private void savePRSettings(){ 
+    	boolean prNameTaken;
+    	//This if/else is done in order to prevent app from thinking that
+    	//name is taken whenever it is opened from options screen
+    	if(!prevMenu.equals("optionsScreen"))
+            prNameTaken = prNameTaken();
+    	else
+    		prNameTaken = false;
+    	
         if(checkIfEmpty() && !prNameTaken){
             boolean tempBool;
         
-            newPRSettings.setPrName(prName.getText());
-            newPRSettings.setInitScore(Double.parseDouble(initScore.getText()));
-            newPRSettings.setChallongeUsername(challongeUsername.getText());
-            newPRSettings.setChallongeApiKey(challongeApiKey.getText());
-            newPRSettings.setNumTourneysNeeded(Integer.parseInt(numTourneysNeeded.getText()));
-            newPRSettings.setNumSetsNeeded(Integer.parseInt(numSetsNeeded.getText()));
+            newPr.setPrName(prName.getText());
+            newPr.setInitScore(Double.parseDouble(initScore.getText()));
+            newPr.setChallongeUsername(challongeUsername.getText());
+            newPr.setChallongeApiKey(challongeApiKey.getText());
+            newPr.setNumTourneysNeeded(Integer.parseInt(numTourneysNeeded.getText()));
+            newPr.setNumSetsNeeded(Integer.parseInt(numSetsNeeded.getText()));
             
             tempBool = "Yes".equals(showPlacingDiff.getValue().toString());
-            newPRSettings.setShowPlacingDiff(tempBool);
+            newPr.setShowPlacingDiff(tempBool);
 
             tempBool = "Yes".equals(showPointDiff.getValue().toString());
-            newPRSettings.setShowPointDiff(tempBool);
+            newPr.setShowPointDiff(tempBool);
 
             tempBool = "Yes".equals(removeInnactive.getValue().toString());
-            newPRSettings.setRemoveInnactive(tempBool);
+            newPr.setRemoveInactive(tempBool);
             
-            if(newPRSettings.getRemoveInnactive()){
-                newPRSettings.setNumTourneysForInnactive(Integer.parseInt(numTourneysForInnactive.getText()));
-                newPRSettings.setNumTourneysForActive(Integer.parseInt(numTourneysForActive.getText()));
+            if(newPr.getRemoveInactive()){
+                newPr.setNumTourneysForInactive(Integer.parseInt(numTourneysForInnactive.getText()));
+                newPr.setNumTourneysForActive(Integer.parseInt(numTourneysForActive.getText()));
             }
             
             if(!implementPointDecay.disabledProperty().getValue()){
                 tempBool = "Yes".equals(implementPointDecay.getValue().toString());
-                newPRSettings.setImplementPointDecay(tempBool);
+                newPr.setImplementPointDecay(tempBool);
                 
-                if(newPRSettings.getImplementPointDecay())
-                    newPRSettings.setStartOfDecay(Integer.parseInt(startOfDecay.getText()));
+                if(newPr.getImplementPointDecay())
+                    newPr.setStartOfDecay(Integer.parseInt(startOfDecay.getText()));
                 if(removeSameCheckBox.isSelected())
-                    newPRSettings.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));
+                    newPr.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));
                 else
-                    newPRSettings.setPointsRemoved(-1);
+                    newPr.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));
             }
             
             File prSettingsFile = mainApp.getPrSettingsFilePath();

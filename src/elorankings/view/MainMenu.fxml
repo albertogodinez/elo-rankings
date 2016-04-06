@@ -8,7 +8,7 @@
    <children>
       <Pane prefHeight="500.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button fx:id="viewPR" layoutX="261.0" layoutY="171.0" mnemonicParsing="false" onAction="#openPRList" prefHeight="60.0" prefWidth="200.0" text="View Power Rankings" textAlignment="CENTER" />
+            <Button fx:id="viewAllPr" layoutX="261.0" layoutY="171.0" mnemonicParsing="false" onAction="#openPRList" prefHeight="60.0" prefWidth="200.0" text="View Power Rankings" textAlignment="CENTER" />
             <Button fx:id="createPR" layoutX="261.0" layoutY="270.0" mnemonicParsing="false" onAction="#handleNewPR" prefHeight="60.0" prefWidth="200.0" text="Create a new Power Ranking" textAlignment="CENTER" wrapText="true" />
          </children>
       </Pane>

@@ -64,7 +64,7 @@
                      </padding>
                   </Label>
                   <TextField fx:id="prName" alignment="CENTER" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="Enter Name Here" styleClass="textField" stylesheets="@DarkTheme.css" GridPane.columnIndex="1" />
-                  <TextField fx:id="initScore" alignment="CENTER" layoutX="359.0" layoutY="22.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="1500" styleClass="textField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="initScore" alignment="CENTER" layoutX="359.0" layoutY="22.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="220.0" promptText="1000" styleClass="textField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label contentDisplay="CENTER" layoutX="233.0" layoutY="85.0" text="Show point difference when updated?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="5">
                      <font>
                         <Font size="16.0" />

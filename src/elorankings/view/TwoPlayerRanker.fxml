@@ -52,6 +52,11 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
+            <Button fx:id="save" layoutX="697.0" layoutY="557.0" mnemonicParsing="false" onAction="#saveUpdate" text="Save">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
          </children>
       </Pane>
    </children>

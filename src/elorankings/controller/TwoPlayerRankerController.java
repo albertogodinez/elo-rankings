@@ -3,7 +3,6 @@ package elorankings.controller;
 import elorankings.formula.EloFormula;
 import elorankings.model.PRSettings;
 import elorankings.model.PlayerProfile;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +13,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
-import javafx.stage.FileChooser;
 
 
 @SuppressWarnings("rawtypes")
@@ -25,8 +23,9 @@ public class TwoPlayerRankerController {
     private ComboBox loserComboBox;
     
     MainApp mainApp;
-    PRSettings pr;
-    private List<PlayerProfile> playersList;
+    PRSettings oldPr;
+    PRSettings newPr;
+    private List<PlayerProfile> playersList = new ArrayList<PlayerProfile>();
     
 /**
   * Is called by the main application to give a reference back to itself.
@@ -39,10 +38,12 @@ public class TwoPlayerRankerController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/MainMenu.fxml"));
         loader.setController(this);
         
-        this.pr = pr;
+        oldPr = new PRSettings(pr);
+		
+        newPr = new PRSettings(pr);
         
-        pr.sortByTag();
-        playersList = pr.getAllPlayers();
+        newPr.sortByTag();
+        playersList = newPr.getAllPlayers();
         
         fillComboBoxes();
     }
@@ -98,7 +99,7 @@ public class TwoPlayerRankerController {
         Optional<String> result = dialog.showAndWait();
         String temp = "0";
         if (result.isPresent() && !result.get().isEmpty()){
-            System.out.println("Your choice: " + result.get());
+            //System.out.println("Your choice: " + result.get());
             String tempArr[] = result.get().split("%");
             temp = tempArr[0];
         }
@@ -112,9 +113,22 @@ public class TwoPlayerRankerController {
         EloFormula eloForm = new EloFormula();
         PlayerProfile tempWinner, tempLoser;
         
-        tempWinner = pr.getPlayerByTag((String) winnerComboBox.getSelectionModel().getSelectedItem());
-        tempLoser = pr.getPlayerByTag((String)loserComboBox.getSelectionModel().getSelectedItem());
-
+        tempWinner = newPr.getPlayerByTag((String) winnerComboBox.getSelectionModel().getSelectedItem());
+        tempLoser = newPr.getPlayerByTag((String)loserComboBox.getSelectionModel().getSelectedItem());
+        
+        tempWinner.setPreviousScore(tempWinner.getScore());
+        tempLoser.setPreviousScore(tempLoser.getScore());
+        
+        if(tempWinner.getPlayersStatus().equals("active"))
+        	tempWinner.setPreviousRanking(tempWinner.getRanking());
+        else
+        	tempWinner.setPreviousRanking(-1);
+        
+        if(tempLoser.getPlayersStatus().equals("active"))
+        	tempLoser.setPreviousRanking(tempLoser.getRanking());
+        else
+        	tempLoser.setPreviousRanking(-1);
+        
         eloForm.setWinnerStatus(tempWinner.getPlayersStatus());
         eloForm.setLoserStatus(tempLoser.getPlayersStatus());
 
@@ -130,21 +144,9 @@ public class TwoPlayerRankerController {
         eloForm.setPointPercentage(pointPercentage);
 
         eloForm.calculateRating();
-
-        System.out.println(tempWinner.getPlayersTag() + " (Winner)Old Rating: " + tempWinner.getScore() + 
-                           " and Total Sets: " + tempWinner.getSetsPlayed());
-        System.out.println(tempLoser.getPlayersTag() + " (Loser)Old Rating: " + tempLoser.getScore() + 
-                            " and Total Sets: " + tempLoser.getSetsPlayed());
-
+        
         tempWinner.setScore(eloForm.getWinnerRating());
-        tempLoser.setScore(eloForm.getLoserRating());          
-
-        System.out.println(tempWinner.getPlayersTag() + " (Winner)New Rating: " + tempWinner.getScore() + 
-                           " and Total Sets: " + tempWinner.getSetsPlayed());
-        System.out.println(tempLoser.getPlayersTag() + " (Loser)New Rating: " + tempLoser.getScore() + 
-                           " and Total Sets: " + tempLoser.getSetsPlayed() + "\n\n");
-
-        //tempLoser.incrementTourneySetsLost(); 
+        tempLoser.setScore(eloForm.getLoserRating());   
     }
     
     @FXML
@@ -171,34 +173,11 @@ public class TwoPlayerRankerController {
     
     @FXML
     public void backToPROptionsScreen(){
-        File prSettingsFile = mainApp.getPrSettingsFilePath();
-            if(prSettingsFile != null){
-                mainApp.savePrSettingsDataToFile(prSettingsFile);
-            }
-            else{
-                handleSaveAs();
-            }
-            
-        mainApp.openPROptionsScreen(pr.getPrName());
+    	mainApp.backToPROptionsScreen(oldPr);
     }
     
-    private void handleSaveAs() {
-        FileChooser fileChooser = new FileChooser();
-
-        // Set extension filter
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "XML files (*.xml)", "*.xml");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        // Show save file dialog
-        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
-       
-        if (file != null) {
-            // Make sure it has the correct extension
-            if (!file.getPath().endsWith(".xml")) {
-                file = new File(file.getPath() + ".xml");
-            }
-            mainApp.savePrSettingsDataToFile(file);
-        }
+    @FXML
+    public void saveUpdate(){
+    	mainApp.backToPROptionsScreen(newPr);
     }
 }

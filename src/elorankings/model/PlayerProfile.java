@@ -14,10 +14,15 @@ public class PlayerProfile {
     private final IntegerProperty tourneysEntered;
     private final IntegerProperty setsPlayed;
     private final StringProperty lastDateEntered;
+    //This is the date for the last tournament date that the player missed
+    private final StringProperty lastDateMissed;
     private final StringProperty playersStatus;
     private int playerId;
     private int tourneySetsPlayed = 1;
     private int tourneySetsLost = 0;
+    private double previousScore = 0;
+    private int previousRanking = -1;
+    private int tournamentsMissed = 0;
     /*
     **This represents the last tournment that the player entered, by obtaining 
     **the total number.
@@ -36,6 +41,7 @@ public class PlayerProfile {
         //Players Status include, unrated, active, inactive
         playersStatus = new SimpleStringProperty("unrated");
         lastDateEntered = new SimpleStringProperty("0");
+        lastDateMissed = new SimpleStringProperty("0");
         playerId = id;
     }
     
@@ -47,7 +53,27 @@ public class PlayerProfile {
         setsPlayed = new SimpleIntegerProperty();
         playersStatus = new SimpleStringProperty("");
         lastDateEntered = new SimpleStringProperty("0");
+        lastDateMissed = new SimpleStringProperty("0");
         playerId = 1;
+    }
+    
+    public PlayerProfile(PlayerProfile newProfile){
+    	this.playersTag = new SimpleStringProperty(newProfile.getPlayersTag());
+        this.score = new SimpleDoubleProperty(newProfile.getScore());
+        this.ranking = new SimpleIntegerProperty(newProfile.getRanking());
+        this.tourneysEntered = new SimpleIntegerProperty(newProfile.getTourneysEntered());
+        this.setsPlayed = new SimpleIntegerProperty(newProfile.getSetsPlayed());
+        this.playersStatus = new SimpleStringProperty(newProfile.getPlayersStatus());
+        this.lastDateEntered = new SimpleStringProperty(newProfile.getLastDateEntered());
+        this.playerId = newProfile.getPlayerId();
+        this.tourneySetsPlayed = newProfile.getTourneySetsPlayed();
+        this.tourneySetsLost = newProfile.getTourneySetsLost();
+        this.previousScore = newProfile.getPreviousScore();
+        this.previousRanking = newProfile.getPreviousRanking();
+        this.tournamentsMissed = newProfile.getTournamentsMissed();
+        this.lastTournamentEntered = newProfile.getLastTournamentEntered();
+        this.tourneysWhileInactive = newProfile.getTourneysWhileInactive();
+        this.lastDateMissed = new SimpleStringProperty(newProfile.getLastDateMissed());
     }
     
     public StringProperty playersTag(){
@@ -207,4 +233,40 @@ public class PlayerProfile {
     public int getLastTournamentEntered(){
         return lastTournamentEntered;
     }
+
+	public double getPreviousScore() {
+		return previousScore;
+	}
+
+	public void setPreviousScore(double previousScore) {
+		this.previousScore = previousScore;
+	}
+
+	public int getPreviousRanking() {
+		return previousRanking;
+	}
+
+	public void setPreviousRanking(int previousRanking) {
+		this.previousRanking = previousRanking;
+	}
+
+	public int getTournamentsMissed() {
+		return tournamentsMissed;
+	}
+
+	public void setTournamentsMissed(int tournamentsMissed) {
+		this.tournamentsMissed = tournamentsMissed;
+	}
+
+	public StringProperty lastDateMissed(){
+		return lastDateMissed;
+	}
+    
+	public void setLastDateMissed(String lastDateMissed){
+		this.lastDateMissed.set(lastDateMissed);
+	}
+	
+	public String getLastDateMissed(){
+		return lastDateMissed.get();
+	}
 }

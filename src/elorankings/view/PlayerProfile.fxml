@@ -24,6 +24,9 @@
                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
@@ -59,12 +62,12 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label contentDisplay="CENTER" layoutX="217.0" layoutY="105.0" text="Player status: " textAlignment="CENTER" wrapText="true" GridPane.rowIndex="4">
+                  <Label contentDisplay="CENTER" layoutX="217.0" layoutY="105.0" text="Player status: " textAlignment="CENTER" wrapText="true" GridPane.rowIndex="7">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="playersStatus" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <ComboBox fx:id="playersStatus" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                   	<items>
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="active" />
@@ -73,6 +76,36 @@
                         </FXCollections>
                     </items>
                   </ComboBox>
+                  <Label contentDisplay="CENTER" layoutX="279.0" layoutY="107.0" text="Number of tournaments before Inactive:" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" layoutX="256.0" layoutY="137.0" text="Previous Score: " textAlignment="CENTER" wrapText="true" GridPane.rowIndex="5">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" layoutX="319.0" layoutY="167.0" text="Previous Ranking: " textAlignment="CENTER" wrapText="true" GridPane.rowIndex="6">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="tournamentsBeforeInactive" contentDisplay="CENTER" layoutX="410.0" layoutY="77.0" styleClass="label-bright" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="previousScore" contentDisplay="CENTER" layoutX="410.0" layoutY="137.0" styleClass="label-bright" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="previousRanking" contentDisplay="CENTER" layoutX="410.0" layoutY="167.0" styleClass="label-bright" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
             </GridPane>
             <Button layoutX="16.0" layoutY="549.0" mnemonicParsing="false" onAction="#backToPlayerList" text="Back" textAlignment="CENTER" wrapText="true">

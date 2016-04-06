@@ -6,7 +6,6 @@ import challongeapi.pojoclasses.Tournament;
 import elorankings.formula.EloFormula;
 import elorankings.model.PRSettings;
 import elorankings.model.PlayerProfile;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  *
@@ -30,7 +29,9 @@ public class AddTournamentController {
     private Button backButton;
     
     MainApp mainApp;
-    PRSettings pr;
+    PRSettings oldPr;
+    PRSettings newPr;
+    private boolean countAsTourney;
     
 /**
   * Is called by the main application to give a reference back to itself.
@@ -43,10 +44,12 @@ public class AddTournamentController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/MainMenu.fxml"));
         loader.setController(this);
         
-        this.pr = pr;
+        oldPr = new PRSettings(pr);
+        newPr = new PRSettings(pr);     
+        newPr.sortByTag();
     }
     
-    private boolean confirmationDialog(){
+    private boolean confirmPointsGivenDialog(){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation Dialog");
         alert.setHeaderText("Give full points for rankings");
@@ -62,7 +65,7 @@ public class AddTournamentController {
         }
     }
     
-    private double retrieveInput(){
+    private double retrievePointsToBeGiven(){
         double returnedValue;
         List<String> choices = new ArrayList<>();
         choices.add("25%");
@@ -95,68 +98,83 @@ public class AddTournamentController {
         alert.setHeaderText("URL Not Found");
         alert.setContentText("I'm sorry."
         		+ "\nI could not find the Challonge URL entered."
-        		+ "\nPlease enter another Challonge URL.");
+        		+ "\nPlease enter another Challonge URL or check to see if"
+        		+ "the Challonge API Key and Username are entered correctly.");
 
         alert.showAndWait();
     }
     
-    @FXML
-    public void backToPROptionsScreen(){
-        File prSettingsFile = mainApp.getPrSettingsFilePath();
-            if(prSettingsFile != null){
-                mainApp.savePrSettingsDataToFile(prSettingsFile);
-            }
-            else{
-                handleSaveAs();
-            }
-            
-        mainApp.openPROptionsScreen(pr.getPrName());
+    private boolean countTournamentDialog(){
+    	Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Tournament");
+        alert.setHeaderText("Increase tournaments attended for these users");
+        alert.setContentText("Select OK if you would like this tournament to count "
+        		+ "as a tournament attended for players selected. "
+                + "If you would like this to not count as a tournament"
+                + " select cancel.");
+        
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            return true;
+        } else {
+            return false;
+        }
     }
     
-    private void handleSaveAs() {
-        FileChooser fileChooser = new FileChooser();
-
-        // Set extension filter
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "XML files (*.xml)", "*.xml");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        // Show save file dialog
-        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
-       
-        if (file != null) {
-            // Make sure it has the correct extension
-            if (!file.getPath().endsWith(".xml")) {
-                file = new File(file.getPath() + ".xml");
-            }
-            mainApp.savePrSettingsDataToFile(file);
-        }
+    @FXML
+    public void backToPROptionsScreen(){ 
+       // mainApp.openPROptionsScreen(pr.getPrName());
+        mainApp.backToPROptionsScreen(oldPr);
+    }
+    
+    @FXML
+    public void saveUpdate(){
+    	mainApp.backToPROptionsScreen(newPr);
+    }
+    
+    private void updatePreviousInfo(List<PlayerProfile> tempProfiles){
+    	for(PlayerProfile playerPro : tempProfiles){
+    		playerPro.setPreviousScore(playerPro.getScore());
+    		if(playerPro.getPlayersStatus().equals("active"))
+    			playerPro.setPreviousRanking(playerPro.getRanking());
+    		else
+    			playerPro.setPreviousRanking(-1);
+    	}
     }
     
     @FXML
     public void addTournament(){
         ChallongeWrapper cw = new ChallongeWrapper();
         
+        newPr.sortByTag();
+        
         try{
-        	cw.runUrl(pr.getChallongeUsername(), pr.getChallongeApiKey(), challongeLink.getText());
+        	cw.runUrl(newPr.getChallongeUsername(), newPr.getChallongeApiKey(), challongeLink.getText());
         	
         	Tournament tempTournament = cw.getTournamentInfo();
             List<String> participants =  cw.getParticipants();
             List<String> unusedParticipants = new ArrayList<>();
-            pr.sortByTag();
-            List<PlayerProfile> tempProfiles = pr.getAllPlayers();
+            
+            List<PlayerProfile> tempProfiles = newPr.getAllPlayers();
+            
+            updatePreviousInfo(tempProfiles);
+            
             List<Match> matches = cw.getMatches();
             
             double pointPercentage = 1;
-            if(!confirmationDialog())
-                pointPercentage = retrieveInput();
+            countAsTourney = countTournamentDialog();
+            
+            if(!confirmPointsGivenDialog())
+                pointPercentage = retrievePointsToBeGiven();
             
             for(PlayerProfile playerProfile : tempProfiles){
                 unusedParticipants.add(playerProfile.getPlayersTag());
             }
+            
+            
         
             for(int i = 0; i < participants.size(); i++){
-                if(!pr.tagTaken(participants.get(i))){
+                if(!newPr.tagTaken(participants.get(i))){
                     ChoiceDialog<String> dialog = new ChoiceDialog<>("",unusedParticipants);
                     dialog.setTitle("Player not found");
                     dialog.setHeaderText(participants.get(i)+ " was not found. Please choose another player tag or enter select cancel to create a new player profile");
@@ -173,7 +191,7 @@ public class AddTournamentController {
                         participants.set(i, result.get());
                     }
                     else
-                        pr.addPlayerByTag(participants.get(i));
+                        newPr.addPlayerByTag(participants.get(i));
                 }
                     unusedParticipants.remove(participants.get(i));
             } 
@@ -182,8 +200,8 @@ public class AddTournamentController {
             PlayerProfile tempWinner, tempLoser;
             
             for(Match match : matches){
-                tempWinner = pr.getPlayerByTag(match.getWinner());
-                tempLoser = pr.getPlayerByTag(match.getLoser());
+                tempWinner = newPr.getPlayerByTag(match.getWinner());
+                tempLoser = newPr.getPlayerByTag(match.getLoser());
                 
                 eloForm.setWinnerStatus(tempWinner.getPlayersStatus());
                 eloForm.setLoserStatus(tempLoser.getPlayersStatus());
@@ -221,16 +239,19 @@ public class AddTournamentController {
                                    " and Total Sets: " + tempLoser.getSetsPlayed() + "\n\n");
                 
                 //System.out.println("\n\n Tournament Type: " + tempTournament.getTournamentType());
-                if(pointPercentage==1){
+                if(countAsTourney){
                     tempLoser.incrementTourneySetsLost();      
-                    System.out.println("this is NOT swiss or round robin!");
                 }
             }
-            
-            if(pointPercentage==1){
-                pr.incrementTotalTournaments();
-                pr.updateTournamentsEntered(participants, tempTournament.getStartedAt());
+            if(countAsTourney){
+            	System.out.println("Got to here");
+            	if(!newPr.getLastDateEntered().equals(tempTournament.getStartedAt()))
+            		newPr.incrementTotalTournaments();
+
+                newPr.setLastDateEntered(tempTournament.getStartedAt());
+                newPr.updateTournamentsEntered(participants, tempTournament.getStartedAt());  
             }
+            //This is going to have to eventually be changed!
         }
         catch(Exception e){
         	failedURLAlert();

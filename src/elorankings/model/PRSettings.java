@@ -19,19 +19,19 @@ import javax.xml.bind.annotation.XmlType;
    Model class for each of the Power Rankings
 */
 @XmlType(name="prsetting")
-public class PRSettings {
+public class PRSettings implements Cloneable{
     //Holds all of the players that are in this PR
     //Considering changing to maps instead, but will change later
     @XmlElementWrapper(name="players")
     @XmlElement(name ="player")
-    private ArrayList<PlayerProfile> playersList = new ArrayList<PlayerProfile>();
+    private ArrayList<PlayerProfile> playersList;
     private final StringProperty prName;
     private final DoubleProperty initScore;
     private final StringProperty challongeUsername;
     private final StringProperty challongeApiKey;
     private final BooleanProperty showPlacingDiff;
     private final BooleanProperty showPointDiff;
-    private final BooleanProperty removeInnactive;
+    private final BooleanProperty removeInactive;
     /*
     **Number of tournaments an Unrated player must attend before being considered
     **Active
@@ -39,9 +39,9 @@ public class PRSettings {
     private final IntegerProperty numTourneysNeeded;
     //Number of sets player needs to play in order to be considered Active
     private final IntegerProperty numSetsNeeded;
-    //Number of tournaments missed before Active player is considered Innactive
-    private final IntegerProperty numTourneysForInnactive;
-    //Number of tournaments entered before Active player is considered Innactive
+    //Number of tournaments missed before Active player is considered Inactive
+    private final IntegerProperty numTourneysForInactive;
+    //Number of tournaments entered before Inactive player is considered Active
     private final IntegerProperty numTourneysForActive;
     private final BooleanProperty implementPointDecay;
     //Decay starts taking effect on this missed tournament
@@ -57,18 +57,20 @@ public class PRSettings {
     **and will be used to see how many tournaments the user has missed
     */
     private int totalNumTournaments;
+    private final StringProperty lastDateEntered;
     
     public PRSettings(){
+    	playersList = new ArrayList<PlayerProfile>();
         prName = new SimpleStringProperty("");
         initScore = new SimpleDoubleProperty(2);
         challongeUsername = new SimpleStringProperty("");
         challongeApiKey = new SimpleStringProperty("");
         showPlacingDiff = new SimpleBooleanProperty();
         showPointDiff = new SimpleBooleanProperty();
-        removeInnactive = new SimpleBooleanProperty();
+        removeInactive = new SimpleBooleanProperty();
         numTourneysNeeded = new SimpleIntegerProperty(3);
         numSetsNeeded = new SimpleIntegerProperty(8);
-        numTourneysForInnactive = new SimpleIntegerProperty(5);
+        numTourneysForInactive = new SimpleIntegerProperty(5);
         numTourneysForActive = new SimpleIntegerProperty(2);
         implementPointDecay = new SimpleBooleanProperty(false);
         startOfDecay = new SimpleIntegerProperty(3);
@@ -76,9 +78,37 @@ public class PRSettings {
         samePointsRemoved = true;
         currentId=0;
         totalNumTournaments=0;
+        lastDateEntered = new SimpleStringProperty("");
     }
     
-    public StringProperty prName(){
+    public PRSettings(PRSettings pr) {
+    	playersList = new ArrayList<PlayerProfile>();
+    	PlayerProfile tempPro;
+    	for(PlayerProfile playerPro : pr.getAllPlayers()){
+    		tempPro = new PlayerProfile(playerPro);
+    		playersList.add(tempPro);
+    	}
+        this.prName = new SimpleStringProperty(pr.getPrName());
+        this.initScore = new SimpleDoubleProperty(pr.getInitScore());
+        this.challongeUsername = new SimpleStringProperty(pr.getChallongeUsername());
+        this.challongeApiKey = new SimpleStringProperty(pr.getChallongeApiKey());
+        this.showPlacingDiff = new SimpleBooleanProperty(pr.getShowPlacingDiff());
+        this.showPointDiff = new SimpleBooleanProperty(pr.getShowPointDiff());
+        this.removeInactive = new SimpleBooleanProperty(pr.getRemoveInactive());
+        this.numTourneysNeeded = new SimpleIntegerProperty(pr.getNumTourneysNeeded());
+        this.numSetsNeeded = new SimpleIntegerProperty(pr.getNumSetsNeeded());
+        this.numTourneysForInactive = new SimpleIntegerProperty(pr.getNumTourneysForInactive());
+        this.numTourneysForActive = new SimpleIntegerProperty(pr.getNumTourneysForActive());
+        this.implementPointDecay = new SimpleBooleanProperty(pr.getImplementPointDecay());
+        this.startOfDecay = new SimpleIntegerProperty(pr.getStartOfDecay());
+        this.pointsRemoved = new SimpleIntegerProperty(pr.getPointsRemoved());
+        this.samePointsRemoved = pr.getSamePointsRemoved();
+        this.currentId= pr.getCurrentId();
+        this.totalNumTournaments=pr.getTotalNumTournaments();
+        this.lastDateEntered = new SimpleStringProperty(pr.getLastDateEntered());
+	}
+
+	public StringProperty prName(){
         return prName;
     }
     
@@ -168,24 +198,39 @@ public class PRSettings {
         this.numSetsNeeded.set(numSetsNeeded);
     }
     
-    public BooleanProperty removeInnactive(){
-        return removeInnactive;
+    public BooleanProperty removeInactive(){
+        return removeInactive;
     }
     
-    public boolean getRemoveInnactive(){
-        return removeInnactive.get();
+    public boolean getRemoveInactive(){
+        return removeInactive.get();
     }
     
-    public void setRemoveInnactive(boolean removeInnactive){
-        this.removeInnactive.set(removeInnactive);
+    public void setRemoveInactive(boolean removeInactive){
+        this.removeInactive.set(removeInactive);
+        
+        if(this.removeInactive.get()){
+        	for(PlayerProfile playerPro : playersList){
+        		if((totalNumTournaments - playerPro.getLastTournamentEntered()) >= numTourneysForInactive.get()){
+        			playerPro.setTourneysWhileInactive(0);
+        			playerPro.setPlayersStatus("inactive");
+        		}
+        	}
+        }
+        else{
+        	for(PlayerProfile playerPro : playersList){
+        		if(playerPro.getPlayersStatus().equals("inactive"))
+        			playerPro.setPlayersStatus("active");
+        	}
+        }
     }
     
-    public int getNumTourneysForInnactive(){
-        return numTourneysForInnactive.get();
+    public int getNumTourneysForInactive(){
+        return numTourneysForInactive.get();
     }
     
-    public void setNumTourneysForInnactive(int numTourneysForInnactive){
-        this.numTourneysForInnactive.set(numTourneysForInnactive);
+    public void setNumTourneysForInactive(int numTourneysForInactive){
+        this.numTourneysForInactive.set(numTourneysForInactive);
     }
 
     public int getNumTourneysForActive(){
@@ -336,16 +381,20 @@ public class PRSettings {
             //This is done if a player in the PR entered the tournament
             if(containsCaseInsensitive(playersList.get(i).getPlayersTag(), participants)){
                 System.out.println(playersList.get(i).getPlayersTag() + " is being updated.\n");
-                playersList.get(i).setLastDateEntered(dateOfTournament);
-                playersList.get(i).incrementTournamentsEntered();
-                playersList.get(i).setLastTournamentEntered(totalNumTournaments);
+                if(!playersList.get(i).getLastDateEntered().equals(lastDateEntered.get())){
+                	playersList.get(i).setLastDateEntered(dateOfTournament);
+                	playersList.get(i).incrementTournamentsEntered();
+                	//playersList.get(i).setLastTournamentEntered(totalNumTournaments);
+                	playersList.get(i).setTournamentsMissed(0);
+                }
                 if(playersList.get(i).getTourneysEntered() >= numTourneysNeeded.get()){
                     String status = playersList.get(i).getPlayersStatus();
                     if(status.equals("unrated"))
                         playersList.get(i).setPlayersStatus("active");
                 }
                 
-                if(playersList.get(i).getPlayersStatus().equals("inactive")){
+                if(playersList.get(i).getPlayersStatus().equals("inactive") && 
+                		!playersList.get(i).getLastDateEntered().equals(lastDateEntered.get())){
                     playersList.get(i).incrementTourneysEnteredWhileInactive();
                     if(playersList.get(i).getTourneysWhileInactive() >= numTourneysForActive.get())
                         playersList.get(i).setPlayersStatus("active");
@@ -353,12 +402,26 @@ public class PRSettings {
                 playersList.get(i).resetTourneySets();
             }
             else{
-                if((totalNumTournaments - playersList.get(i).getLastTournamentEntered()) >= numTourneysForInnactive.get()){
-                    if(playersList.get(i).getPlayersStatus().equals("active")){
-                        playersList.get(i).setTourneysWhileInactive(0);
-                        playersList.get(i).setPlayersStatus("inactive");
-                    }
-                }
+            	if(playersList.get(i).getPlayersStatus().equals("active")){
+            		if(!lastDateEntered.get().equals(playersList.get(i).getLastDateMissed())){
+            			playersList.get(i).setTournamentsMissed(playersList.get(i).getTournamentsMissed()+1);
+            		}
+            		
+            		System.out.println(playersList.get(i).getPlayersTag() + " : " + playersList.get(i).getTournamentsMissed());
+            		
+            		if(removeInactive.getValue() && !lastDateEntered.get().equals(playersList.get(i).getLastDateMissed())){
+            			if(playersList.get(i).getTournamentsMissed() >= numTourneysForInactive.get()){
+            				playersList.get(i).setTourneysWhileInactive(0);
+            				playersList.get(i).setPlayersStatus("inactive");
+            			}
+            			System.out.println("\npoint decay is : " + implementPointDecay.getValue());
+            			if(implementPointDecay.getValue() && playersList.get(i).getTournamentsMissed() >= startOfDecay.getValue()){
+            				System.out.println("\nPoints removed: " + pointsRemoved.getValue());
+            				playersList.get(i).setScore(playersList.get(i).getScore()-pointsRemoved.getValue());
+            			}
+            		}
+            		playersList.get(i).setLastDateMissed(lastDateEntered.get());
+            	}
             }
         }
         return true;
@@ -399,6 +462,10 @@ public class PRSettings {
         return playersList;
     }
     
+    public void setAllPlayers(ArrayList<PlayerProfile> newPlayers){
+    	this.playersList = newPlayers;
+    }
+    
     public PlayerProfile getLastPlayerAdded(){
         return playersList.get(playersList.size()-1);
     }
@@ -435,7 +502,16 @@ public class PRSettings {
             return p1.getScore() > p2.getScore() ? -1 : p1.getScore() == p2.getScore() ? 0 : 1;
         }
     }
-    
- 
-    
+
+	public StringProperty showLastDateEntered() {
+		return lastDateEntered;
+	}
+	
+	public String getLastDateEntered(){
+		return lastDateEntered.get();
+	}
+	
+	public void setLastDateEntered(String lastDateEntered){
+		this.lastDateEntered.set(lastDateEntered);
+	}
 }

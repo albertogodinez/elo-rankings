@@ -86,7 +86,20 @@ public class PRViewController {
             allData.add(formatedOutput);
 
             if("active".equals(player.getPlayersStatus())){
-                formatedOutput = String.format("%1$-20s %2$10s", player.getRanking() + ". " + player.getPlayersTag() + " ",roundedScore);
+            	String pointDiff = Double.toString(roundedScore);
+            	
+            	if(pr.getShowPointDiff()){
+            		pointDiff += " (";
+            		pointDiff += Double.toString(DecimalUtils.round(player.getScore() - player.getPreviousScore(), 2));
+            		pointDiff += ")";
+            	}
+            	if(pr.getShowPlacingDiff()){
+            		pointDiff += " (";
+            		pointDiff += Integer.toString(player.getPreviousRanking());
+            		pointDiff += ")";
+            	}
+            	
+                formatedOutput = String.format("%1$-20s %2$10s", player.getRanking() + ". " + player.getPlayersTag() + " ",pointDiff);
                 activeData.add(formatedOutput);
             }
             
@@ -178,16 +191,9 @@ public class PRViewController {
     
     @FXML
     public void deletePlayer(){
-        String selectedPlayer = deleteSelectedPlayer();
-        if(selectedPlayer == null){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(mainApp.getPrimaryStage());
-            alert.setTitle("No player selected");
-            alert.setHeaderText("Please select a player that you would like to delete");
+    	try{
+            String selectedPlayer = deleteSelectedPlayer();
             
-            alert.showAndWait();
-        }
-        else{
             selectedPlayer = selectedPlayer.substring(selectedPlayer.indexOf(" ") + 1);
             selectedPlayer = selectedPlayer.substring(0, selectedPlayer.indexOf(" "));
             pr.deletePlayerByTag(selectedPlayer);
@@ -200,7 +206,15 @@ public class PRViewController {
                 handleSaveAs();
             }
             showPRs();
-        }       
+            
+    	}catch(Exception e){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No player selected");
+            alert.setHeaderText("Please select a player that you would like to delete");
+            
+            alert.showAndWait();
+    	}
     }
     
     @FXML
@@ -247,20 +261,21 @@ public class PRViewController {
     
     @FXML
     public void editPlayer(){
-        String selectedPlayer = getSelectedPlayer();
-        if(selectedPlayer == null){
+    	try{
+    		String selectedPlayer = getSelectedPlayer();
+
+            selectedPlayer = selectedPlayer.substring(selectedPlayer.indexOf(" ") + 1);
+            selectedPlayer = selectedPlayer.substring(0, selectedPlayer.indexOf(" "));
+            PlayerProfile playerProfile = pr.getPlayerByTag(selectedPlayer);
+            mainApp.openPlayerProfile(prName.getText(), playerProfile);
+    	}
+    	catch(Exception e){
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("No player selected");
             alert.setHeaderText("Please make sure to select a player");
             
-            alert.showAndWait();            
-        }
-        else{
-            selectedPlayer = selectedPlayer.substring(selectedPlayer.indexOf(" ") + 1);
-            selectedPlayer = selectedPlayer.substring(0, selectedPlayer.indexOf(" "));
-            PlayerProfile playerProfile = pr.getPlayerByTag(selectedPlayer);
-            mainApp.openPlayerProfile(prName.getText(), playerProfile);
-        }
+            alert.showAndWait();      
+    	}
     }
 }

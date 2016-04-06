@@ -111,8 +111,21 @@ public class MainApp extends Application {
         }
     }
     
-    public void openPROptionsScreen(String prName){
+    
+    //LET ME TRY SOMETHING NEW
+    
+
+    public void backToPROptionsScreen(PRSettings pr){
         try {
+        	for(int i=0; i < prList.size(); i++){
+        		if(prList.get(i).getPrName().equals(pr.getPrName())){
+        			prList.remove(i);
+        			prList.add(i, pr);
+        		}
+        	}
+        	File file = getPrSettingsFilePath();
+        	savePrSettingsDataToFile(file);
+        	
             FXMLLoader loader = new FXMLLoader();
             
             loader.setLocation(MainApp.class.getResource("/elorankings/view/PROptionsScreen.fxml"));
@@ -122,6 +135,31 @@ public class MainApp extends Application {
             rootLayout.setCenter(overview);
             
 
+            // Give the controller access to the main app.
+            PROptionsScreenController controller = loader.getController();
+            controller.setMainApp(this, pr.getPrName());
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+ 
+    public void openPROptionsScreen(String prName){
+        try {
+        	// Try to load last opened person file.
+            //File file = getPrSettingsFilePath();
+           // if (file != null) {
+             //   loadPrSettingsDataFromFile(file);
+            //}
+            FXMLLoader loader = new FXMLLoader();
+            
+            loader.setLocation(MainApp.class.getResource("/elorankings/view/PROptionsScreen.fxml"));
+            AnchorPane overview = (AnchorPane) loader.load();
+
+            // Set main menu into the center of root layout.
+            rootLayout.setCenter(overview);
+
+         
             // Give the controller access to the main app.
             PROptionsScreenController controller = loader.getController();
             controller.setMainApp(this, prName);
@@ -223,12 +261,12 @@ public class MainApp extends Application {
             //Set PR Settings into the center of root layout.
             rootLayout.setCenter(prSetting);
             
-            PRSettings prSettings = new PRSettings();
-            prList.add(prSettings);
+            //PRSettings prSettings = new PRSettings();
+            //prList.add(prSettings);
             
             // Gives the controller access to the PR Settings
             PRSettingsController controller = loader.getController();
-            controller.setMainApp(this, prSettings);
+            controller.setMainApp(this);
             
         } catch (IOException e) {
             e.printStackTrace();
@@ -337,6 +375,7 @@ public class MainApp extends Application {
            prList.clear();
            prList = wrapper.getPrList();
            
+           //System.out.println(prList.get(0).getAllPlayers().get(0).getPlayersTag());
            //System.out.println("unmarshal test: " + wrapper.getPrList().get(1).getChallongeApiKey());
            //System.out.println("unmarshal test: " + wrapper.getPrList().get(1).getAllPlayers().get(0).getPlayersTag());
            //System.out.println("unmarshal test: " + wrapper.getPrList().get(1).getAllPlayers().get(0).getPlayersStatus());

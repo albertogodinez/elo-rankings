@@ -10,12 +10,17 @@
 <AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" styleClass="background" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elorankings.controller.PRListController">
    <children>
       <ListView fx:id="prList" layoutX="251.0" layoutY="151.0" prefHeight="300.0" prefWidth="300.0" />
-      <Button layoutX="14.0" layoutY="545.0" mnemonicParsing="false" onAction="#backToMainMenu" text="Back" textAlignment="CENTER">
+      <Button layoutX="18.0" layoutY="545.0" mnemonicParsing="false" onAction="#backToMainMenu" text="Back" textAlignment="CENTER">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <Button layoutX="630.0" layoutY="550.0" mnemonicParsing="false" onAction="#goToSelectedTournament" text="Edit Tournament" textAlignment="CENTER">
+      <Button layoutX="595.0" layoutY="548.0" mnemonicParsing="false" onAction="#openSelectedPr" text="Edit Power Ranking" textAlignment="CENTER">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
+      <Button layoutX="289.0" layoutY="545.0" mnemonicParsing="false" onAction="#deleteSelectedPr" text="Delete Power Ranking" textAlignment="CENTER">
          <font>
             <Font size="16.0" />
          </font>

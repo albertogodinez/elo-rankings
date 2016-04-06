@@ -1,13 +1,21 @@
 package elorankings.controller;
 
 
+
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
+
+
 
 public class MainMenuController {
 //Reference to the Main App 
     private MainApp mainApp;
-    
+    @FXML
+    private Button viewAllPr;
     
     public MainMenuController(){
     }
@@ -17,10 +25,16 @@ public class MainMenuController {
   * 
   * @param mainApp
 **/
+    
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/MainMenu.fxml"));
         loader.setController(this);
+         
+        if(mainApp.getPRs().size() <= 0){
+        	System.out.println("got to here");
+        	viewAllPr.setDisable(true);
+        }
     }
     
 /**

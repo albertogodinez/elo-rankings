@@ -14,7 +14,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
-
 @SuppressWarnings("rawtypes")
 public class PRSettingsController {
     @FXML
@@ -92,6 +91,7 @@ public class PRSettingsController {
                 startOfDecay.setDisable(true);
                 removeSameCheckBox.setDisable(true);
                 removeAvgCheckBox.setDisable(true);
+                pointsRemoved.setDisable(true);
             }
         });
         
@@ -113,11 +113,9 @@ public class PRSettingsController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue){
                 if(newValue.booleanValue()){
-                    //pointsRemoved.setDisable(false);
                     removeSameCheckBox.setDisable(true);
                 }
                 else{
-                    //pointsRemoved.setDisable(true);
                     removeSameCheckBox.setDisable(false);
                 }
             }
@@ -139,7 +137,7 @@ public class PRSettingsController {
     
   
     private boolean checkIfEmpty(){
-       
+       //The following check to make sure TextFields are filled out
         if(prName.getText().trim().length() == 0 || 
            initScore.getText().trim().length() == 0 ||
            challongeUsername.getText().trim().length() == 0 ||
@@ -153,21 +151,33 @@ public class PRSettingsController {
            numTourneysForActive.getText().trim().length() == 0 ||
            startOfDecay.getText().trim().length() == 0 ||
            pointsRemoved.getText().trim().length() == 0){
-            return false;
+            return true;
         }
         if(!implementPointDecay.disabledProperty().getValue()){
             if(implementPointDecay.getSelectionModel().isEmpty())
-                return false;
+                return true;
             else if("Yes".equals(implementPointDecay.getValue().toString())){
                 if(!removeSameCheckBox.isSelected() && !removeAvgCheckBox.isSelected())
-                    return false;
+                    return true;
             }
         }
-        return true;
+        
+        //The following check to see if ComboBoxes are filled out
+        if("SELECT".equals(removeInnactive.getValue().toString()) ||
+        	"SELECT".equals(showPlacingDiff.getValue().toString())||
+        	"SELECT".equals(showPointDiff.getValue().toString())){
+        	return true;
+        }
+        if(!implementPointDecay.disabledProperty().getValue()){
+        	if("SELECT".equals(implementPointDecay.getValue().toString())){
+        		return true;
+        	}
+        }
+
+        return false;
     }
     
     private void loadPRSettings2(){
-        //mainApp.updatePR(newPRSettings);
     	mainApp.getPRs().add(newPr);
         mainApp.openNewPRSettings2(newPr);
     }
@@ -231,6 +241,34 @@ public class PRSettingsController {
         }
 
     }
+    
+    private boolean isNumber(){
+    	try {
+    	    double d = Double.parseDouble(initScore.getText());
+    	    d = Double.parseDouble(numTourneysNeeded.getText());
+    	    d = Double.parseDouble(numSetsNeeded.getText());
+    	    
+
+            if("Yes".equals(removeInnactive.getValue().toString())){
+            	d = Double.parseDouble(numTourneysForInnactive.getText());
+            	d = Double.parseDouble(numTourneysForActive.getText());
+            }
+            if(!implementPointDecay.disabledProperty().getValue() && "Yes".equals(implementPointDecay.getValue().toString())){
+                /*if(newPr.getImplementPointDecay())*/
+                    d = Double.parseDouble((startOfDecay.getText()));
+                    if(removeSameCheckBox.isSelected())
+                        d = Double.parseDouble((pointsRemoved.getText()));
+            }
+            
+            
+    	    // string is a number
+    	    return true;
+    	} catch (NumberFormatException e) {
+    	    // string is not a number
+    		return false;
+ 	
+    	}
+    }
 
     private boolean prNameTaken(){
         String tempName = prName.getText();
@@ -254,15 +292,20 @@ public class PRSettingsController {
   
     @FXML
     private void savePRSettings(){ 
-    	boolean prNameTaken;
+    	boolean prNameTaken, isNumber=true,isEmpty;
     	//This if/else is done in order to prevent app from thinking that
     	//name is taken whenever it is opened from options screen
-    	if(!prevMenu.equals("optionsScreen"))
+    	if(!prevMenu.equals("optionsScreen") && !prevMenu.equals("prSettings2"))
             prNameTaken = prNameTaken();
     	else
     		prNameTaken = false;
     	
-        if(checkIfEmpty() && !prNameTaken){
+    	isEmpty = checkIfEmpty();
+    	
+    	if(!isEmpty)
+    		isNumber = isNumber();
+    	
+        if(!checkIfEmpty() && !prNameTaken && isNumber){
             boolean tempBool;
         
             newPr.setPrName(prName.getText());
@@ -286,8 +329,10 @@ public class PRSettingsController {
                 newPr.setNumTourneysForActive(Integer.parseInt(numTourneysForActive.getText()));
             }
             
-            if(!implementPointDecay.disabledProperty().getValue()){
-                tempBool = "Yes".equals(implementPointDecay.getValue().toString());
+            //tempBool = "Yes".equals(implementPointDecay.getValue().toString());
+            
+            if(!implementPointDecay.disabledProperty().getValue() && 
+               "Yes".equals(implementPointDecay.getValue().toString())){
                 newPr.setImplementPointDecay(tempBool);
                 
                 if(newPr.getImplementPointDecay())
@@ -297,14 +342,16 @@ public class PRSettingsController {
                 else
                     newPr.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));
             }
-            
-            File prSettingsFile = mainApp.getPrSettingsFilePath();
-            if(prSettingsFile != null){
-                mainApp.savePrSettingsDataToFile(prSettingsFile);
-            }
-            else{
-                handleSaveAs();
-            }
+
+        	if(prevMenu.equals("optionsScreen")){
+                File prSettingsFile = mainApp.getPrSettingsFilePath();
+                if(prSettingsFile != null){
+                    mainApp.savePrSettingsDataToFile(prSettingsFile);
+                }
+                else{
+                    handleSaveAs();
+                }
+        	}
             //After it is saved, then the second page is loaded*/
             //if it is not loaded from the options screen
             if(!prevMenu.equals("optionsScreen")){
@@ -323,6 +370,11 @@ public class PRSettingsController {
                 title = "PR Name Taken";
                 headerText = "PR Name '" + prName.getText() + "' is already taken.";
                 contextText = "Please enter another name for this PR";
+            }
+            else if(!isNumber){
+            	title = "Number was not entered";
+            	headerText = "One of the fields does not contain a number";
+            	contextText = "Please enter numbers in the required fields.";
             }
             else{
                 title = "Empty Fields";

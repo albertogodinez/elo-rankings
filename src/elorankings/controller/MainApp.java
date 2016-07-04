@@ -33,7 +33,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("EloApp");
+        this.primaryStage.setTitle("Elo Ranker");
         
         this.primaryStage.getIcons().add(new Image("file:resources/images/Logo1.png"));
 

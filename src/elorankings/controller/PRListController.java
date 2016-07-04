@@ -1,6 +1,7 @@
 package elorankings.controller;
 
 import java.io.File;
+import java.util.Optional;
 
 import elorankings.model.PRSettings;
 import javafx.collections.FXCollections;
@@ -10,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.stage.FileChooser;
+import javafx.scene.control.ButtonType;
 
 
 public class PRListController {
@@ -52,6 +54,21 @@ public class PRListController {
         alert.setHeaderText("Please make sure to select a Power Ranking");
         
         alert.showAndWait();    
+    }
+    
+    private boolean deletionWarning(){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(mainApp.getPrimaryStage());
+        alert.setTitle("Delete Power Ranking");
+        alert.setHeaderText("Are you sure you want to delete this Power Ranking?");
+        
+        Optional<ButtonType> result = alert.showAndWait();    
+        
+        if(result.get() == ButtonType.OK)
+        	return true;
+        
+        else
+        	return false;
     }
     
     private void handleSaveAs() {
@@ -99,28 +116,28 @@ public class PRListController {
     	try{
             String selectedPr = prList.getSelectionModel().getSelectedItem().toString();
             
-            for(int i=0; i < allPr.size(); i++){
-            	if(allPr.get(i).getPrName().equals(selectedPr)){
-            		allPr.remove(i);
-            	}
-           
+            if(deletionWarning()){
+                for(int i=0; i < allPr.size(); i++){
+                	if(allPr.get(i).getPrName().equals(selectedPr)){
+                		allPr.remove(i);
+                	}
+                }
+                
+                data.remove(selectedPr);
+                
+                File prSettingsFile = mainApp.getPrSettingsFilePath();
+                if(prSettingsFile != null){
+                mainApp.savePrSettingsDataToFile(prSettingsFile);
+                }
+                else{
+                    handleSaveAs();
+                }
+                
+                if(allPr.size() <= 0){
+                	mainApp.showMainMenu();
+                }
             }
-            
-            data.remove(selectedPr);
-           
-            
-            
-            File prSettingsFile = mainApp.getPrSettingsFilePath();
-            if(prSettingsFile != null){
-            mainApp.savePrSettingsDataToFile(prSettingsFile);
-            }
-            else{
-                handleSaveAs();
-            }
-            
-            if(allPr.size() <= 0){
-            	mainApp.showMainMenu();
-            }
+
     	}catch(Exception e){
     		noSelectionWarning();
     	}

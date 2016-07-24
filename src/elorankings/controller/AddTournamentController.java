@@ -107,7 +107,7 @@ public class AddTournamentController {
     private boolean countTournamentDialog(){
     	Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmation Tournament");
-        alert.setHeaderText("Increase tournaments attended for these users");
+        alert.setHeaderText("Increase tournaments attended for these players");
         alert.setContentText("Select OK if you would like this tournament to count "
         		+ "as a tournament attended for players selected. "
                 + "If you would like this to not count as a tournament"

@@ -48,7 +48,7 @@
             </AnchorPane>
          </center>
          <right>
-            <Label fx:id="addPlayersInfo" alignment="TOP_CENTER" contentDisplay="RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="375.0" prefWidth="283.0" text="Add Players Individually by providing a tag name and initial ranking.  If no Initial ranking is provided, then player will have the initial ranking that was set on the previous page." wrapText="true" BorderPane.alignment="CENTER">
+            <Label fx:id="addPlayersInfo" alignment="TOP_CENTER" contentDisplay="RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="375.0" prefWidth="283.0" text="Add Players Individually by providing a tag name.  Just make sure that each new player is on a new line." wrapText="true" BorderPane.alignment="CENTER">
                <font>
                   <Font size="16.0" />
                </font>

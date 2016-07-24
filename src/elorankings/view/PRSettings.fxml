@@ -105,7 +105,7 @@
                         </FXCollections>
                      </items>
                   </ComboBox>
-                  <Label contentDisplay="CENTER" layoutX="133.0" layoutY="145.0" text="Number of tournaments missed before Active player is considered Innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="9" GridPane.vgrow="ALWAYS">
+                  <Label contentDisplay="CENTER" layoutX="133.0" layoutY="145.0" text="Number of tournaments missed before Active player is considered Inactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="9" GridPane.vgrow="ALWAYS">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -113,7 +113,7 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <Label contentDisplay="CENTER" layoutX="10.0" layoutY="172.0" text="Number of tournaments entered before Active player is considered Innactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="10" GridPane.vgrow="SOMETIMES">
+                  <Label contentDisplay="CENTER" layoutX="10.0" layoutY="172.0" text="Number of tournaments entered before Active player is considered Inactive?" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="10" GridPane.vgrow="SOMETIMES">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -177,7 +177,7 @@
                         <Insets bottom="10.0" left="10.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="saveButton" alignment="CENTER" layoutX="10.0" layoutY="518.0" mnemonicParsing="false" onAction="#savePRSettings" text="Save &amp; Next" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="16">
+                  <Button fx:id="saveButton" alignment="CENTER" layoutX="10.0" layoutY="518.0" mnemonicParsing="false" onAction="#savePRSettings" text="Next" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="16">
                      <font>
                         <Font size="16.0" />
                      </font>

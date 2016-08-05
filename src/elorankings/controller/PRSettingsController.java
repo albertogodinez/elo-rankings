@@ -31,21 +31,17 @@ public class PRSettingsController {
     @FXML
     private ComboBox showPointDiff;
     @FXML
-    private ComboBox removeInnactive;
+    private ComboBox removeInactive;
     @FXML
     private TextField numSetsNeeded;
     @FXML
-    private TextField numTourneysForInnactive;
+    private TextField numTourneysForInactive;
     @FXML
     private TextField numTourneysForActive;
     @FXML
     private ComboBox implementPointDecay;
     @FXML
     private TextField startOfDecay;
-    @FXML
-    private CheckBox removeSameCheckBox;
-    @FXML
-    private CheckBox removeAvgCheckBox;
     @FXML
     private TextField pointsRemoved;
     @FXML
@@ -66,17 +62,19 @@ public class PRSettingsController {
     @SuppressWarnings("unchecked")
 	@FXML
     private void initialize(){
-        removeInnactive.getSelectionModel().selectedItemProperty().addListener(
+        removeInactive.getSelectionModel().selectedItemProperty().addListener(
             (ObservableValue observableValue, Object oldSelection, Object newSelection) -> {
             if("Yes".equals(newSelection.toString())){
-                numTourneysForInnactive.setDisable(false);
+                numTourneysForInactive.setDisable(false);
                 numTourneysForActive.setDisable(false);
                 implementPointDecay.setDisable(false);
             }
             else{
-                numTourneysForInnactive.setDisable(true);
+                numTourneysForInactive.setDisable(true);
                 numTourneysForActive.setDisable(true);
                 implementPointDecay.setDisable(true);
+                startOfDecay.setDisable(true);
+                pointsRemoved.setDisable(true);
             }
         });
         
@@ -84,40 +82,11 @@ public class PRSettingsController {
         (ObservableValue observableValue, Object oldSelection, Object newSelection) ->{
             if("Yes".equals(newSelection.toString())){
                 startOfDecay.setDisable(false);
-                removeSameCheckBox.setDisable(false);
-                removeAvgCheckBox.setDisable(false);
+                pointsRemoved.setDisable(false);
             }
             else{
                 startOfDecay.setDisable(true);
-                removeSameCheckBox.setDisable(true);
-                removeAvgCheckBox.setDisable(true);
                 pointsRemoved.setDisable(true);
-            }
-        });
-        
-        removeSameCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>(){
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue){
-                if(newValue.booleanValue()){
-                    pointsRemoved.setDisable(false);
-                    removeAvgCheckBox.setDisable(true);
-                }
-                else{
-                    pointsRemoved.setDisable(true);
-                    removeAvgCheckBox.setDisable(false);
-                }
-            }
-        });
-        
-        removeAvgCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>(){
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue){
-                if(newValue.booleanValue()){
-                    removeSameCheckBox.setDisable(true);
-                }
-                else{
-                    removeSameCheckBox.setDisable(false);
-                }
             }
         });
     }
@@ -145,25 +114,24 @@ public class PRSettingsController {
            numTourneysNeeded.getText().trim().length() == 0 ||
            numSetsNeeded.getText().trim().length() == 0 ||
            showPlacingDiff.getSelectionModel().isEmpty() ||
-           showPointDiff.getSelectionModel().isEmpty() ||
-           removeInnactive.getSelectionModel().isEmpty() || 
-           numTourneysForInnactive.getText().trim().length() == 0 ||
-           numTourneysForActive.getText().trim().length() == 0 ||
-           startOfDecay.getText().trim().length() == 0 ||
-           pointsRemoved.getText().trim().length() == 0){
+           showPointDiff.getSelectionModel().isEmpty()){
             return true;
         }
+        
+        
         if(!implementPointDecay.disabledProperty().getValue()){
             if(implementPointDecay.getSelectionModel().isEmpty())
                 return true;
             else if("Yes".equals(implementPointDecay.getValue().toString())){
-                if(!removeSameCheckBox.isSelected() && !removeAvgCheckBox.isSelected())
-                    return true;
+            	if(startOfDecay.getText().trim().length() == 0 ||
+            	   pointsRemoved.getText().trim().length() == 0){
+            		return true;
+            	}
             }
         }
         
         //The following check to see if ComboBoxes are filled out
-        if("SELECT".equals(removeInnactive.getValue().toString()) ||
+        if("SELECT".equals(removeInactive.getValue().toString()) ||
         	"SELECT".equals(showPlacingDiff.getValue().toString())||
         	"SELECT".equals(showPointDiff.getValue().toString())){
         	return true;
@@ -207,26 +175,26 @@ public class PRSettingsController {
             showPointDiff.getSelectionModel().selectLast();
         
         if(newPr.getRemoveInactive()){
-            removeInnactive.getSelectionModel().selectFirst();
-            numTourneysForInnactive.setText(Integer.toString(newPr.getNumTourneysForInactive()));
+            removeInactive.getSelectionModel().selectFirst();
+            numTourneysForInactive.setText(Integer.toString(newPr.getNumTourneysForInactive()));
             numTourneysForActive.setText(Integer.toString(newPr.getNumTourneysForActive()));
-            
+         
+            //CHECK THIS OUT!!
             if(newPr.getImplementPointDecay()){
                 implementPointDecay.getSelectionModel().selectFirst();
                 startOfDecay.setText(Integer.toString(newPr.getStartOfDecay()));
-                if(newPr.getSamePointsRemoved()){
-                    removeSameCheckBox.setSelected(true);
+                //if(newPr.getSamePointsRemoved()){
                     pointsRemoved.setText(Integer.toString(newPr.getPointsRemoved()));
-                }
-                else
-                    removeAvgCheckBox.setSelected(true);
+               // }
+               // else
+                //    removeAvgCheckBox.setSelected(true);
                     
             }
             else
                 implementPointDecay.getSelectionModel().selectLast();
         }
         else
-            removeInnactive.getSelectionModel().selectLast();
+            removeInactive.getSelectionModel().selectLast();
         
         //If the previous menu was the options screen, disable and change buttons
         if(prevMenu.equals("optionsScreen")){
@@ -249,14 +217,14 @@ public class PRSettingsController {
     	    d = Double.parseDouble(numSetsNeeded.getText());
     	    
 
-            if("Yes".equals(removeInnactive.getValue().toString())){
-            	d = Double.parseDouble(numTourneysForInnactive.getText());
+            if("Yes".equals(removeInactive.getValue().toString())){
+            	d = Double.parseDouble(numTourneysForInactive.getText());
             	d = Double.parseDouble(numTourneysForActive.getText());
             }
             if(!implementPointDecay.disabledProperty().getValue() && "Yes".equals(implementPointDecay.getValue().toString())){
                 /*if(newPr.getImplementPointDecay())*/
                     d = Double.parseDouble((startOfDecay.getText()));
-                    if(removeSameCheckBox.isSelected())
+                   // if(removeSameCheckBox.isSelected())
                         d = Double.parseDouble((pointsRemoved.getText()));
             }
             
@@ -321,11 +289,11 @@ public class PRSettingsController {
             tempBool = "Yes".equals(showPointDiff.getValue().toString());
             newPr.setShowPointDiff(tempBool);
 
-            tempBool = "Yes".equals(removeInnactive.getValue().toString());
+            tempBool = "Yes".equals(removeInactive.getValue().toString());
             newPr.setRemoveInactive(tempBool);
             
             if(newPr.getRemoveInactive()){
-                newPr.setNumTourneysForInactive(Integer.parseInt(numTourneysForInnactive.getText()));
+                newPr.setNumTourneysForInactive(Integer.parseInt(numTourneysForInactive.getText()));
                 newPr.setNumTourneysForActive(Integer.parseInt(numTourneysForActive.getText()));
             }
             
@@ -335,12 +303,18 @@ public class PRSettingsController {
                "Yes".equals(implementPointDecay.getValue().toString())){
                 newPr.setImplementPointDecay(tempBool);
                 
-                if(newPr.getImplementPointDecay())
+                if(newPr.getImplementPointDecay()){
                     newPr.setStartOfDecay(Integer.parseInt(startOfDecay.getText()));
-                if(removeSameCheckBox.isSelected())
+                    newPr.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));
+                }
+               /* if(removeSameCheckBox.isSelected())
                     newPr.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));
                 else
-                    newPr.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));
+                    newPr.setPointsRemoved(Integer.parseInt(pointsRemoved.getText()));*/
+            }
+            else if(!implementPointDecay.disabledProperty().getValue() && 
+            "No".equals(implementPointDecay.getValue().toString())){
+            	newPr.setImplementPointDecay(false);
             }
 
         	if(prevMenu.equals("optionsScreen")){

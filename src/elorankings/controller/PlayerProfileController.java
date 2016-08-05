@@ -59,8 +59,6 @@ public class PlayerProfileController {
         else
             isNewPlayer = true;
         
-        System.out.println(playerProfile.getLastDateMissed());
-        System.out.println(playerProfile.getLastDateEntered());
         fillProfile();
         
         
@@ -121,8 +119,12 @@ public class PlayerProfileController {
     
     @FXML
     public void savePlayerInfo(){
-        
-        if(!checkIfLabelsEmpty() && !isNewNameTaken()){
+    	boolean labelEmpty = checkIfLabelsEmpty();
+    	boolean nameTaken = false;
+    	if(!labelEmpty)
+    		nameTaken = isNewNameTaken();
+    	
+        if(!labelEmpty && !nameTaken){
             if(!isNewPlayer){
                 playerProfile.setPlayersTag(playersTag.getText());
                 playerProfile.setScore(Double.parseDouble(playersScore.getText()));
@@ -146,6 +148,16 @@ public class PlayerProfileController {
             
             pr.sortByScore();
             mainApp.openPRView(pr.getPrName());
+        }
+        else if(nameTaken){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("Tag Taken");
+            alert.setHeaderText("The tag '" + playersTag.getText() + "' is already taken");
+            //alert.setContentText("Please enter another tag for this user");
+
+            alert.showAndWait();  
+        	
         }
         else{
             Alert alert = new Alert(Alert.AlertType.WARNING);

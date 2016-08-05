@@ -30,11 +30,6 @@ public class MainMenuController {
         this.mainApp = mainApp;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/elorankings/view/MainMenu.fxml"));
         loader.setController(this);
-         
-        if(mainApp.getPRs().size() <= 0){
-        	System.out.println("got to here");
-        	viewAllPr.setDisable(true);
-        }
     }
     
 /**
